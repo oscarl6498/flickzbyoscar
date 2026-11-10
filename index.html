@@ -847,7 +847,7 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
           <p id="clientAlbumDescription" class="section-description"></p>
         </div>
         <div class="client-photo-grid" id="clientPhotoGrid"></div>
-        <label class="portal-consent"><input type="checkbox" id="instagramConsent"><span>I give FLICKZ BY OSCAR permission to feature the photos I select on Instagram/social media. This is optional. For anyone under 18, a parent or legal guardian must give permission.</span></label>
+        <label class="portal-consent"><input type="checkbox" id="instagramConsent"><span>I am the adult rights holder or the parent/legal guardian of any minor pictured, and I give FLICKZ BY OSCAR permission to feature the selected photos on Instagram/social media. This is optional. Do not check this box unless you have authority to grant permission for everyone pictured.</span></label>
         <div class="portal-actions">
           <button class="btn btn-primary" id="submitPhotoSelections" type="button">SUBMIT MY SELECTIONS ↗</button>
           <button class="btn btn-outline" id="downloadSelectedPhotos" type="button">DOWNLOAD SELECTED PHOTOS ↓</button>
@@ -945,30 +945,6 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
   </div>
 </section>
 </main>
-
-<!-- PRIVATE VIEWER COUNT AREA AT BOTTOM -->
-<section class="admin-section" id="private-viewer-area">
-  <div class="container">
-    <div class="admin-access">
-      <div>
-        <h3>Website Owner Access</h3>
-        <p>Private viewer statistics area. Enter your access code to continue.</p>
-      </div>
-      <form class="admin-form" id="adminForm">
-        <input type="password" id="adminCode" placeholder="Access code" inputmode="numeric" maxlength="12" aria-label="Owner access code">
-        <button class="btn btn-outline" type="submit">View Statistics</button>
-      </form>
-    </div>
-
-    <div class="admin-panel" id="adminPanel">
-      <h3>WEBSITE VIEWER COUNT</h3>
-      <div class="viewer-number" id="viewerNumber">—</div>
-      <p class="admin-status" id="viewerStatus">Loading viewer statistics...</p>
-      <button class="btn btn-outline" id="refreshViews" type="button">Refresh Count ↻</button>
-    </div>
-    <p class="admin-status" id="adminMessage" aria-live="polite"></p>
-  </div>
-</section>
 
 <!-- FOOTER -->
 <footer>
@@ -1228,103 +1204,6 @@ document.getElementById("copyPaymentNumber").addEventListener("click", async () 
   } catch (error) {
     message.textContent = "Copy unavailable. Number: 929-503-9518";
   }
-});
-
-/* =========================================
-   VIEWER COUNT
-   ========================================= */
-
-// Local fallback: counts visits in this browser only.
-// For a true all-visitors count, connect a Worker API.
-// Suggested Worker API contract:
-// POST { "action": "view" } increments and returns { "views": 123 }
-// POST { "action": "stats", "code": "..." } checks the PIN server-side
-// and returns { "views": 123 } only when the PIN is valid.
-
-const LOCAL_VIEW_KEY = "flickz_local_view_count";
-const LOCAL_SESSION_KEY = "flickz_session_counted";
-
-function getLocalViewCount() {
-  return Number(localStorage.getItem(LOCAL_VIEW_KEY) || "0");
-}
-
-function addLocalView() {
-  if (sessionStorage.getItem(LOCAL_SESSION_KEY)) return;
-  const nextCount = getLocalViewCount() + 1;
-  localStorage.setItem(LOCAL_VIEW_KEY, String(nextCount));
-  sessionStorage.setItem(LOCAL_SESSION_KEY, "yes");
-}
-
-addLocalView();
-
-async function recordWebsiteView() {
-  if (!VIEWER_API_URL || VIEWER_API_URL === "YOUR_VIEWER_COUNT_WORKER_URL") return;
-
-  try {
-    await fetch(VIEWER_API_URL, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({action:"view"})
-    });
-  } catch (error) {
-    console.warn("Could not record website view.");
-  }
-}
-
-recordWebsiteView();
-
-const adminForm = document.getElementById("adminForm");
-const adminCode = document.getElementById("adminCode");
-const adminPanel = document.getElementById("adminPanel");
-const adminMessage = document.getElementById("adminMessage");
-const viewerNumber = document.getElementById("viewerNumber");
-const viewerStatus = document.getElementById("viewerStatus");
-const refreshViews = document.getElementById("refreshViews");
-
-let ownerUnlocked = false;
-
-async function loadViewerStats(code) {
-  viewerStatus.textContent = "Loading viewer statistics...";
-  viewerNumber.textContent = "—";
-
-  if (!VIEWER_API_URL || VIEWER_API_URL === "YOUR_VIEWER_COUNT_WORKER_URL") {
-    viewerNumber.textContent = getLocalViewCount().toLocaleString();
-    viewerStatus.textContent =
-      "Local browser count only. Connect your Cloudflare viewer-count Worker to see the real total across all website visitors.";
-    return;
-  }
-
-  try {
-    const response = await fetch(VIEWER_API_URL, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({action:"stats",code:code})
-    });
-
-    if (!response.ok) throw new Error("Could not retrieve statistics.");
-
-    const data = await response.json();
-    if (typeof data.views !== "number") throw new Error("Invalid viewer-count response.");
-
-    viewerNumber.textContent = data.views.toLocaleString();
-    viewerStatus.textContent = "Total website views reported by your connected Worker.";
-
-  } catch (error) {
-    viewerNumber.textContent = "—";
-    viewerStatus.textContent = "Unable to load global statistics. Check your Worker setup.";
-  }
-}
-
-adminForm.addEventListener("submit", event => {
-  event.preventDefault();
-  adminMessage.textContent = "Viewer statistics are not configured. Browser-side PIN access has been disabled for security.";
-  adminPanel.classList.remove("open");
-  ownerUnlocked = false;
-});
-
-refreshViews.addEventListener("click", async () => {
-  if (!ownerUnlocked) return;
-  await loadViewerStats(adminCode.value);
 });
 
 /* =========================================
