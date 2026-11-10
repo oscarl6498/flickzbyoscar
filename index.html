@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
@@ -449,6 +450,37 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
   .admin-access{align-items:flex-start;flex-direction:column}
   .galaxy-banner::after{right:-100px}
 }
+
+/* PRIVATE CLIENT GALLERIES */
+.portal-grid{display:grid;grid-template-columns:minmax(260px,.8fr) 1.2fr;gap:22px;margin-top:28px}
+.portal-form,.portal-results,.portal-admin{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:25px}
+.portal-form input,.portal-admin input,.portal-admin select{width:100%;padding:13px;background:#070c13;border:1px solid var(--line);color:var(--white);border-radius:5px}
+.portal-form .form-group,.portal-admin .form-group{margin-bottom:14px}
+.portal-note{color:var(--muted);font-size:12px;line-height:1.7;margin-top:12px}
+.portal-admin{margin-top:28px}
+.portal-admin h3,.portal-results h3{font-family:"Barlow Condensed",sans-serif;font-size:27px;margin-bottom:12px}
+.portal-admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.portal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.portal-status{font-size:13px;color:var(--blue2);line-height:1.6;margin-top:12px;white-space:pre-wrap}
+.client-photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
+.client-photo{border:1px solid var(--line);border-radius:7px;overflow:hidden;background:#05080c}
+.client-photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.client-photo label{display:flex;gap:8px;align-items:center;padding:10px;font-size:12px;color:var(--white)}
+.client-photo input{accent-color:var(--blue);width:16px;height:16px}
+.client-photo.selected{outline:2px solid var(--blue)}
+.portal-consent{display:flex;gap:10px;align-items:flex-start;margin:18px 0;color:#c5d0df;font-size:12px;line-height:1.6}
+.portal-consent input{margin-top:3px;accent-color:var(--blue)}
+.admin-album-row,.admin-submission{padding:14px;border:1px solid var(--line);border-radius:6px;margin-top:10px;font-size:12px;line-height:1.7}
+.admin-album-row{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.admin-album-row small{display:block;color:var(--muted);margin-top:5px}
+.admin-submission{border-bottom:1px solid var(--line)}
+.admin-submission-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.admin-download-photo{margin:4px 6px 0 0;padding:8px 10px;font-size:10px}
+.approval-label{font-size:11px;color:var(--green);font-weight:800;letter-spacing:1px}
+
+.portal-hidden{display:none!important}
+@media(max-width:700px){.portal-grid,.portal-admin-grid{grid-template-columns:1fr}.client-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
 </head>
 
@@ -478,6 +510,7 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
       <a href="#packages">Packages</a>
       <a href="#services">Services</a>
       <a href="#booking">Book</a>
+      <a href="#client-portal">Client Portal</a>
       <a href="#support">Support</a>
       <a href="#instagram">Instagram</a>
       <a href="#contact" class="nav-cta">Contact</a>
@@ -799,6 +832,63 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
   </div>
 </section>
 
+<!-- PRIVATE CLIENT PHOTO GALLERIES -->
+<section class="section feature-section" id="client-portal">
+  <div class="container">
+    <div class="section-label">PRIVATE CLIENT ACCESS</div>
+    <h2 class="section-title">YOUR PHOTOS. <span>YOUR MOMENT.</span></h2>
+    <p class="section-description">Enter the private code Oscar gave you to view your album, select photos, and download your choices.</p>
+    <div class="portal-grid">
+      <form class="portal-form" id="clientPortalForm">
+        <div class="form-group"><label for="portalCode">Private Gallery Code</label><input id="portalCode" name="code" type="text" placeholder="Example: A7K29B" required autocomplete="one-time-code" maxlength="12" autocapitalize="characters"></div>
+        <button class="btn btn-primary" type="submit" style="width:100%">VIEW MY PHOTOS ↗</button>
+        <p class="form-message" id="portalMessage" aria-live="polite"></p>
+        <p class="portal-note">Keep this code private. Only share it with people you want to have access to this album.</p>
+      </form>
+      <div class="portal-results" id="portalResults" aria-live="polite">
+        <h3>YOUR PRIVATE GALLERY.</h3><p>Enter your access code to open your album. Choose your favorites and submit your selections.</p>
+      </div>
+    </div>
+    <div class="portal-results portal-hidden" id="clientGallery" style="margin-top:22px">
+      <div style="display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap"><div><div class="section-label">YOUR ALBUM</div><h3 id="clientAlbumTitle">PHOTO GALLERY</h3><p id="clientAlbumDescription"></p></div><button class="btn btn-outline" id="clientGalleryClose" type="button">CLOSE GALLERY</button></div>
+      <div class="client-photo-grid" id="clientPhotoGrid"></div>
+      <label class="portal-consent"><input type="checkbox" id="instagramConsent"><span>I confirm I have permission for every person shown in the photos I select. For anyone under 18, I am their parent/legal guardian or have obtained permission from their parent/legal guardian. I give FLICKZ BY OSCAR optional permission to feature these selected photos on Instagram/social media.</span></label>
+      <div class="portal-actions"><button class="btn btn-primary" id="submitPhotoSelections" type="button">SUBMIT MY SELECTIONS ↗</button><button class="btn btn-outline" id="downloadSelectedPhotos" type="button">DOWNLOAD SELECTED PHOTOS ↓</button></div>
+      <p class="portal-status" id="clientGalleryStatus" aria-live="polite"></p>
+    </div>
+
+    <div class="portal-admin" id="galleryAdmin">
+      <div class="section-label">PHOTOGRAPHER ACCESS</div><h3>GALLERY ADMIN</h3>
+      <p class="section-description">Sign in with your Supabase admin account to create albums, upload photos, and review client selections.</p>
+      <form id="adminLoginForm" class="portal-admin-grid">
+        <div class="form-group"><label for="adminEmail">Admin email</label><input id="adminEmail" type="email" autocomplete="username" required placeholder="Your admin email"></div>
+        <div class="form-group"><label for="adminPassword">Password</label><input id="adminPassword" type="password" autocomplete="current-password" required placeholder="Your password"></div>
+        <div><button class="btn btn-primary" type="submit">ADMIN SIGN IN ↗</button></div>
+      </form>
+      <p class="portal-status" id="adminStatus" aria-live="polite"></p>
+      <div id="adminWorkspace" class="portal-hidden">
+        <div class="portal-actions"><button class="btn btn-outline" id="adminSignOut" type="button">SIGN OUT</button><button class="btn btn-outline" id="refreshAdminData" type="button">REFRESH</button></div>
+        <div class="portal-admin-grid">
+          <form id="createAlbumForm">
+            <h3>CREATE A NEW ALBUM</h3>
+            <div class="form-group"><label for="newAlbumTitle">Person / team / event name</label><input id="newAlbumTitle" required maxlength="100" placeholder="e.g. Alex Rivera — Fall 2026"></div>
+            <div class="form-group"><label for="newAlbumDescription">Description (optional)</label><input id="newAlbumDescription" maxlength="250" placeholder="Game, date, team, or notes"></div>
+            <button class="btn btn-primary" type="submit">CREATE ALBUM + ACCESS CODE</button>
+          </form>
+          <form id="uploadPhotosForm">
+            <h3>UPLOAD PHOTOS</h3>
+            <div class="form-group"><label for="uploadAlbumSelect">Choose album</label><select id="uploadAlbumSelect" required><option value="">Create an album first</option></select></div>
+            <div class="form-group"><label for="photoFiles">Choose multiple photos</label><input id="photoFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple required></div>
+            <button class="btn btn-primary" type="submit">UPLOAD PHOTOS</button>
+          </form>
+        </div>
+        <div style="margin-top:28px"><h3>YOUR ALBUMS & ACCESS CODES</h3><div id="adminAlbumList"></div></div>
+        <div style="margin-top:28px"><h3>CLIENT PHOTO SELECTIONS</h3><div id="adminSubmissions"><p class="portal-note">No selections loaded yet.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- SUPPORT -->
 <section class="section support-section" id="support">
   <div class="container">
@@ -852,30 +942,6 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
 </section>
 </main>
 
-<!-- PRIVATE VIEWER COUNT AREA AT BOTTOM -->
-<section class="admin-section" id="private-viewer-area">
-  <div class="container">
-    <div class="admin-access">
-      <div>
-        <h3>Website Owner Access</h3>
-        <p>Private viewer statistics area. Enter your access code to continue.</p>
-      </div>
-      <form class="admin-form" id="adminForm">
-        <input type="password" id="adminCode" placeholder="Access code" inputmode="numeric" maxlength="12" aria-label="Owner access code">
-        <button class="btn btn-outline" type="submit">View Statistics</button>
-      </form>
-    </div>
-
-    <div class="admin-panel" id="adminPanel">
-      <h3>WEBSITE VIEWER COUNT</h3>
-      <div class="viewer-number" id="viewerNumber">—</div>
-      <p class="admin-status" id="viewerStatus">Loading viewer statistics...</p>
-      <button class="btn btn-outline" id="refreshViews" type="button">Refresh Count ↻</button>
-    </div>
-    <p class="admin-status" id="adminMessage" aria-live="polite"></p>
-  </div>
-</section>
-
 <!-- FOOTER -->
 <footer>
   <div class="container footer-content">
@@ -902,12 +968,14 @@ const WORKER_URL = "YOUR_CLOUDFLARE_WORKER_URL";
 
 // Add a separate viewer-count Worker URL here when it is configured.
 const VIEWER_API_URL = "YOUR_VIEWER_COUNT_WORKER_URL";
+const SUPABASE_URL = "https://qxkepxwaaqkriqsgzcvf.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_p6ZaNm7Kai_q6bdg5W-vnw_00HLwGJc";
+const GALLERY_FUNCTION_URL = SUPABASE_URL + "/functions/v1/flickz-gallery";
+const GALLERY_BUCKET = "flickz-gallery";
 
 const CONTACT_NUMBER = "+19295039518";
 
-// The owner PIN is checked by this page for the basic demonstration.
-// For real privacy, validate it inside Cloudflare Worker instead.
-const OWNER_PIN = "030800";
+// Owner access is protected by Supabase Auth. No password/PIN is stored in this page.
 
 /* =========================================
    MOBILE NAVIGATION
@@ -1141,109 +1209,233 @@ document.getElementById("copyPaymentNumber").addEventListener("click", async () 
 });
 
 /* =========================================
-   VIEWER COUNT
+   PRIVATE CLIENT GALLERIES + ADMIN
    ========================================= */
+const supabaseReady = Boolean(window.supabase?.createClient);
+const sb = supabaseReady ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : null;
+const clientPortalForm = document.getElementById("clientPortalForm");
+const portalMessage = document.getElementById("portalMessage");
+const clientGallery = document.getElementById("clientGallery");
+const clientPhotoGrid = document.getElementById("clientPhotoGrid");
+const clientGalleryStatus = document.getElementById("clientGalleryStatus");
+const adminWorkspace = document.getElementById("adminWorkspace");
+const adminLoginForm = document.getElementById("adminLoginForm");
+let activeClientCode = "";
+let activeClientPhotos = [];
+let activeAdminAlbums = [];
 
-// Local fallback: counts visits in this browser only.
-// For a true all-visitors count, connect a Worker API.
-// Suggested Worker API contract:
-// POST { "action": "view" } increments and returns { "views": 123 }
-// POST { "action": "stats", "code": "..." } checks the PIN server-side
-// and returns { "views": 123 } only when the PIN is valid.
-
-const LOCAL_VIEW_KEY = "flickz_local_view_count";
-const LOCAL_SESSION_KEY = "flickz_session_counted";
-
-function getLocalViewCount() {
-  return Number(localStorage.getItem(LOCAL_VIEW_KEY) || "0");
+function escapeGalleryHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
-
-function addLocalView() {
-  if (sessionStorage.getItem(LOCAL_SESSION_KEY)) return;
-  const nextCount = getLocalViewCount() + 1;
-  localStorage.setItem(LOCAL_VIEW_KEY, String(nextCount));
-  sessionStorage.setItem(LOCAL_SESSION_KEY, "yes");
+function setGalleryStatus(message) { clientGalleryStatus.textContent = message; }
+function setAdminStatus(message) { document.getElementById("adminStatus").textContent = message; }
+function makeAccessCode() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const bytes = crypto.getRandomValues(new Uint8Array(6));
+  return Array.from(bytes, b => chars[b % chars.length]).join("");
 }
-
-addLocalView();
-
-async function recordWebsiteView() {
-  if (!VIEWER_API_URL || VIEWER_API_URL === "YOUR_VIEWER_COUNT_WORKER_URL") return;
-
-  try {
-    await fetch(VIEWER_API_URL, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({action:"view"})
-    });
-  } catch (error) {
-    console.warn("Could not record website view.");
-  }
+async function galleryRequest(payload) {
+  const response = await fetch(GALLERY_FUNCTION_URL, {
+    method:"POST",
+    headers:{"Content-Type":"application/json","apikey":SUPABASE_PUBLISHABLE_KEY},
+    body:JSON.stringify(payload)
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || "Gallery request failed.");
+  return result;
 }
-
-recordWebsiteView();
-
-const adminForm = document.getElementById("adminForm");
-const adminCode = document.getElementById("adminCode");
-const adminPanel = document.getElementById("adminPanel");
-const adminMessage = document.getElementById("adminMessage");
-const viewerNumber = document.getElementById("viewerNumber");
-const viewerStatus = document.getElementById("viewerStatus");
-const refreshViews = document.getElementById("refreshViews");
-
-let ownerUnlocked = false;
-
-async function loadViewerStats(code) {
-  viewerStatus.textContent = "Loading viewer statistics...";
-  viewerNumber.textContent = "—";
-
-  if (!VIEWER_API_URL || VIEWER_API_URL === "YOUR_VIEWER_COUNT_WORKER_URL") {
-    viewerNumber.textContent = getLocalViewCount().toLocaleString();
-    viewerStatus.textContent =
-      "Local browser count only. Connect your Cloudflare viewer-count Worker to see the real total across all website visitors.";
-    return;
-  }
-
-  try {
-    const response = await fetch(VIEWER_API_URL, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({action:"stats",code:code})
-    });
-
-    if (!response.ok) throw new Error("Could not retrieve statistics.");
-
-    const data = await response.json();
-    if (typeof data.views !== "number") throw new Error("Invalid viewer-count response.");
-
-    viewerNumber.textContent = data.views.toLocaleString();
-    viewerStatus.textContent = "Total website views reported by your connected Worker.";
-
-  } catch (error) {
-    viewerNumber.textContent = "—";
-    viewerStatus.textContent = "Unable to load global statistics. Check your Worker setup.";
-  }
+function selectedClientPhotoIds() {
+  return [...clientPhotoGrid.querySelectorAll(".client-photo-check:checked")].map(el => el.value);
 }
-
-adminForm.addEventListener("submit", async event => {
+clientPortalForm?.addEventListener("submit", async event => {
   event.preventDefault();
-
-  if (adminCode.value !== OWNER_PIN) {
-    adminMessage.textContent = "Incorrect access code.";
-    adminPanel.classList.remove("open");
-    ownerUnlocked = false;
-    return;
-  }
-
-  ownerUnlocked = true;
-  adminMessage.textContent = "";
-  adminPanel.classList.add("open");
-  await loadViewerStats(adminCode.value);
+  const button = clientPortalForm.querySelector('button[type="submit"]');
+  const code = document.getElementById("portalCode").value.trim().toUpperCase();
+  button.disabled = true; button.textContent = "CHECKING CODE...";
+  portalMessage.textContent = "";
+  clientGallery.classList.add("portal-hidden");
+  try {
+    const data = await galleryRequest({action:"lookup",code});
+    activeClientCode = code;
+    activeClientPhotos = data.photos || [];
+    document.getElementById("clientAlbumTitle").textContent = data.album?.title || "YOUR PHOTO GALLERY";
+    document.getElementById("clientAlbumDescription").textContent = data.album?.description || "Choose the photos you would like to keep.";
+    document.getElementById("instagramConsent").checked = false;
+    clientPhotoGrid.innerHTML = activeClientPhotos.map(photo =>
+      '<div class="client-photo" data-photo-id="'+escapeGalleryHTML(photo.id)+'"><img src="'+escapeGalleryHTML(photo.url)+'" alt="'+escapeGalleryHTML(photo.file_name || "Client photo")+'" loading="lazy"><label><input type="checkbox" class="client-photo-check" value="'+escapeGalleryHTML(photo.id)+'"> SELECT THIS PHOTO</label></div>'
+    ).join("") || "<p>No photos have been uploaded to this album yet. Please check back soon.</p>";
+    clientPhotoGrid.querySelectorAll(".client-photo-check").forEach(check => check.addEventListener("change", () => check.closest(".client-photo").classList.toggle("selected",check.checked)));
+    clientGallery.classList.remove("portal-hidden");
+    portalMessage.textContent = "Access verified — " + activeClientPhotos.length + " photo(s) in your gallery.";
+    setGalleryStatus("");
+    clientGallery.scrollIntoView({behavior:"smooth",block:"start"});
+  } catch (error) { portalMessage.textContent = error.message || "We couldn't open that gallery. Check your code and try again."; }
+  finally { button.disabled=false; button.textContent="VIEW MY PHOTOS ↗"; }
+});
+document.getElementById("clientGalleryClose")?.addEventListener("click", () => {
+  clientGallery.classList.add("portal-hidden"); activeClientCode=""; activeClientPhotos=[];
+  clientPhotoGrid.innerHTML=""; portalMessage.textContent="";
+});
+document.getElementById("submitPhotoSelections")?.addEventListener("click", async () => {
+  const ids = selectedClientPhotoIds();
+  if (!activeClientCode || !ids.length) { setGalleryStatus("Please select at least one photo first."); return; }
+  const button = document.getElementById("submitPhotoSelections"); button.disabled=true; button.textContent="SUBMITTING...";
+  try {
+    const consent = document.getElementById("instagramConsent").checked;
+    await galleryRequest({action:"submit",code:activeClientCode,photoIds:ids,instagramConsent:consent});
+    setGalleryStatus("Thank you! Your "+ids.length+" selected photo(s) have been sent to Oscar. Instagram permission: "+(consent?"YES":"NO")+". You can download your selections below.");
+  } catch(error) { setGalleryStatus(error.message || "We couldn't submit your selections. Please try again."); }
+  finally { button.disabled=false; button.textContent="SUBMIT MY SELECTIONS ↗"; }
+});
+document.getElementById("downloadSelectedPhotos")?.addEventListener("click", async () => {
+  const ids = selectedClientPhotoIds();
+  if (!activeClientCode || !ids.length) { setGalleryStatus("Select the photos you want to download first."); return; }
+  const button = document.getElementById("downloadSelectedPhotos"); button.disabled=true; button.textContent="PREPARING DOWNLOADS...";
+  try {
+    const data = await galleryRequest({action:"download",code:activeClientCode,photoIds:ids});
+    let count = 0;
+    for (const photo of data.photos || []) {
+      const response = await fetch(photo.url);
+      if (!response.ok) continue;
+      const blob = await response.blob();
+      const objectURL = URL.createObjectURL(blob);
+      const link = document.createElement("a"); link.href=objectURL; link.download=photo.file_name || "flickz-photo.jpg";
+      document.body.appendChild(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(objectURL),30000);
+      count++; await new Promise(resolve => setTimeout(resolve,350));
+    }
+    setGalleryStatus(count+" of "+ids.length+" selected photo(s) downloaded. Allow multiple downloads if your browser asks.");
+  } catch(error) { setGalleryStatus(error.message || "Download could not be prepared. Please try again."); }
+  finally { button.disabled=false; button.textContent="DOWNLOAD SELECTED PHOTOS ↓"; }
 });
 
-refreshViews.addEventListener("click", async () => {
-  if (!ownerUnlocked) return;
-  await loadViewerStats(adminCode.value);
+/* Admin authentication, album management, uploads, and submissions */
+function renderAdminAlbums() {
+  const select = document.getElementById("uploadAlbumSelect");
+  select.innerHTML = '<option value="">Choose an album</option>' + activeAdminAlbums.map(a => '<option value="'+a.id+'">'+escapeGalleryHTML(a.title)+'</option>').join("");
+  document.getElementById("adminAlbumList").innerHTML = activeAdminAlbums.map(a =>
+    '<div class="admin-album-row"><div><strong>'+escapeGalleryHTML(a.title)+'</strong><small>Access code: <b>'+escapeGalleryHTML(a.access_code)+'</b> · '+(a.is_active?"Active":"Closed")+'</small></div><button class="btn btn-outline copy-album-code" type="button" data-code="'+escapeGalleryHTML(a.access_code)+'">COPY CODE</button></div>'
+  ).join("") || '<p class="portal-note">No albums yet. Create your first album above.</p>';
+  document.querySelectorAll(".copy-album-code").forEach(btn => btn.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(btn.dataset.code); btn.textContent="COPIED"; }
+    catch { setAdminStatus("Copy was blocked. Your code is: "+btn.dataset.code); }
+  }));
+}
+async function refreshAdmin() {
+  if (!sb) return;
+  const {data:albums,error} = await sb.from("flickz_albums").select("id,title,description,access_code,is_active,created_at").order("created_at",{ascending:false});
+  if (error) { setAdminStatus("Could not load albums. Please check the SQL migration."); return; }
+  activeAdminAlbums=albums || []; renderAdminAlbums();
+  const {data:submissions,error:subError} = await sb.from("flickz_selections").select("id,album_id,photo_ids,instagram_consent,instagram_approved,created_at").order("created_at",{ascending:false}).limit(100);
+  if (subError) { document.getElementById("adminSubmissions").textContent="Could not load selections. Run the latest SQL migration."; return; }
+  const albumIds=[...new Set((submissions||[]).map(s=>s.album_id))];
+  let photoRows=[];
+  if (albumIds.length) {
+    const {data:rows,error:photoError}=await sb.from("flickz_photos").select("id,album_id,storage_path,file_name").in("album_id",albumIds);
+    if (photoError) { document.getElementById("adminSubmissions").textContent="Could not load photo records."; return; }
+    photoRows=rows||[];
+  }
+  const blocks=[];
+  for (const sub of submissions||[]) {
+    const album=activeAdminAlbums.find(a=>a.id===sub.album_id);
+    const selected=photoRows.filter(p=>(sub.photo_ids||[]).includes(p.id));
+    const thumbParts=[];
+    for (const photo of selected) {
+      const {data:signed,error:signedError}=await sb.storage.from(GALLERY_BUCKET).createSignedUrl(photo.storage_path,1800);
+      if (!signedError && signed?.signedUrl) {
+        thumbParts.push('<a href="'+escapeGalleryHTML(signed.signedUrl)+'" target="_blank" rel="noopener"><img src="'+escapeGalleryHTML(signed.signedUrl)+'" alt="Selected photo" style="width:105px;height:78px;object-fit:cover;border-radius:4px;margin:8px 6px 0 0"></a>');
+        thumbParts.push('<button class="btn btn-outline admin-download-photo" type="button" data-path="'+escapeGalleryHTML(photo.storage_path)+'" data-filename="'+escapeGalleryHTML(photo.file_name)+'">DOWNLOAD '+escapeGalleryHTML(photo.file_name)+'</button>');
+      }
+    }
+    const approvalButton = sub.instagram_consent
+      ? '<button class="btn '+(sub.instagram_approved?'btn-outline':'btn-primary')+' instagram-approval" type="button" data-submission-id="'+escapeGalleryHTML(sub.id)+'" data-approved="'+String(Boolean(sub.instagram_approved))+'">'+(sub.instagram_approved?'REVOKE INSTAGRAM APPROVAL':'APPROVE FOR INSTAGRAM')+'</button>'
+      : '<span class="portal-note">Instagram permission not granted — approval unavailable.</span>';
+    blocks.push('<div class="admin-submission"><strong>'+escapeGalleryHTML(album?.title||"Album")+'</strong><br>'+selected.length+' selected photo(s) · Instagram permission: <b>'+(sub.instagram_consent?"YES":"NO")+'</b><br>Instagram status: <span class="approval-label">'+(sub.instagram_approved?"APPROVED":"NOT APPROVED")+'</span><br><small>'+new Date(sub.created_at).toLocaleString()+'</small><div>'+thumbParts.join("")+'</div><div class="admin-submission-actions">'+approvalButton+'</div><p class="portal-note">Instagram posting is manual. Approval is recorded here; review the guardian permission before featuring any minor.</p></div>');
+  }
+  document.getElementById("adminSubmissions").innerHTML=blocks.join("") || '<p class="portal-note">No client selections submitted yet.</p>';
+
+  document.querySelectorAll(".instagram-approval").forEach(button=>button.addEventListener("click",async()=>{
+    const approved=button.dataset.approved!=="true";
+    button.disabled=true;
+    const {error}=await sb.from("flickz_selections").update({instagram_approved:approved}).eq("id",button.dataset.submissionId);
+    if(error){setAdminStatus("Approval could not be saved. Check that you ran the latest SQL migration.");button.disabled=false;return;}
+    setAdminStatus(approved?"Selection approved for Instagram use.":"Instagram approval revoked.");
+    await refreshAdmin();
+  }));
+  document.querySelectorAll(".admin-download-photo").forEach(button=>button.addEventListener("click",async()=>{
+    const originalLabel=button.textContent; button.disabled=true; button.textContent="PREPARING...";
+    try {
+      const {data:signed,error}=await sb.storage.from(GALLERY_BUCKET).createSignedUrl(button.dataset.path,1800,{download:button.dataset.filename});
+      if(error||!signed?.signedUrl) throw new Error("Download link could not be created.");
+      const response=await fetch(signed.signedUrl);
+      if(!response.ok) throw new Error("Photo download failed.");
+      const blob=await response.blob();
+      const objectUrl=URL.createObjectURL(blob);
+      const link=document.createElement("a"); link.href=objectUrl; link.download=button.dataset.filename || "flickz-photo.jpg";
+      document.body.appendChild(link); link.click(); link.remove();
+      setTimeout(()=>URL.revokeObjectURL(objectUrl),30000);
+      button.textContent="DOWNLOADED";
+    } catch(error) {
+      setAdminStatus(error.message || "Photo download failed.");
+      button.textContent=originalLabel; button.disabled=false;
+    }
+  }));
+}
+adminLoginForm?.addEventListener("submit",async event=>{
+  event.preventDefault();
+  if (!sb) { setAdminStatus("Supabase could not initialize. Check the project URL and publishable key."); return; }
+  const email=document.getElementById("adminEmail").value.trim();
+  const password=document.getElementById("adminPassword").value;
+  const {error}=await sb.auth.signInWithPassword({email,password});
+  if(error){setAdminStatus("Sign-in failed. Check your admin email and password.");return;}
+  adminWorkspace.classList.remove("portal-hidden"); adminLoginForm.classList.add("portal-hidden");
+  setAdminStatus("Signed in. Your galleries are ready to manage."); await refreshAdmin();
+});
+document.getElementById("adminSignOut")?.addEventListener("click",async()=>{
+  await sb?.auth.signOut(); adminWorkspace.classList.add("portal-hidden"); adminLoginForm.classList.remove("portal-hidden"); setAdminStatus("Signed out.");
+});
+document.getElementById("refreshAdminData")?.addEventListener("click",refreshAdmin);
+document.getElementById("createAlbumForm")?.addEventListener("submit",async event=>{
+  event.preventDefault(); if(!sb) return;
+  const {data:userData}=await sb.auth.getUser();
+  if(!userData?.user){setAdminStatus("Please sign in again.");return;}
+  const title=document.getElementById("newAlbumTitle").value.trim();
+  const description=document.getElementById("newAlbumDescription").value.trim();
+  let created=null;
+  for(let i=0;i<6;i++){
+    const access_code=makeAccessCode();
+    const {data,error}=await sb.from("flickz_albums").insert({owner_id:userData.user.id,title,description,access_code,is_active:true}).select().single();
+    if(!error){created=data;break;}
+    if(error.code!=="23505"){setAdminStatus("Album could not be created. Please run the SQL migration and check that you are signed in.");return;}
+  }
+  if(!created){setAdminStatus("Couldn't generate a unique code. Please try again.");return;}
+  document.getElementById("newAlbumTitle").value=""; document.getElementById("newAlbumDescription").value="";
+  setAdminStatus("Album created! Private access code: "+created.access_code); await refreshAdmin();
+});
+document.getElementById("uploadPhotosForm")?.addEventListener("submit",async event=>{
+  event.preventDefault(); if(!sb) return;
+  const albumId=document.getElementById("uploadAlbumSelect").value;
+  const files=[...document.getElementById("photoFiles").files];
+  if(!albumId||!files.length){setAdminStatus("Choose an album and at least one photo.");return;}
+  const button=event.currentTarget.querySelector('button[type="submit"]');
+  button.disabled=true; button.textContent="UPLOADING...";
+  let uploaded=0; const errors=[];
+  for(const file of files){
+    if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>25*1024*1024){errors.push(file.name+": unsupported format or larger than 25 MB");continue;}
+    const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+    const path=albumId+"/"+crypto.randomUUID()+"-"+safeName;
+    const {error:uploadError}=await sb.storage.from(GALLERY_BUCKET).upload(path,file,{contentType:file.type,upsert:false});
+    if(uploadError){errors.push(file.name+": upload failed");continue;}
+    const {error:rowError}=await sb.from("flickz_photos").insert({album_id:albumId,storage_path:path,file_name:file.name});
+    if(rowError){await sb.storage.from(GALLERY_BUCKET).remove([path]);errors.push(file.name+": could not save its photo record");continue;}
+    uploaded++;
+  }
+  document.getElementById("photoFiles").value="";
+  setAdminStatus("Uploaded "+uploaded+" of "+files.length+" photo(s)."+(errors.length?"\n"+errors.join("\n"):""));
+  button.disabled=false; button.textContent="UPLOAD PHOTOS"; await refreshAdmin();
+});
+if(sb) sb.auth.getSession().then(({data})=>{
+  if(data.session){adminWorkspace.classList.remove("portal-hidden");adminLoginForm.classList.add("portal-hidden");setAdminStatus("Admin session restored.");refreshAdmin();}
 });
 
 /* =========================================
