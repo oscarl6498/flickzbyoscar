@@ -45,3 +45,8 @@ revoke all on function public.flickz_submit_selection(text, uuid[], boolean) fro
 -- Explicitly remove any legacy public-read policy left over from the first setup attempt.
 drop policy if exists "Public can view gallery files" on storage.objects;
 drop policy if exists "Anyone can view gallery files" on storage.objects;
+
+
+-- Photographer review state: permission and approval remain separate.
+alter table public.flickz_selections
+  add column if not exists instagram_approved boolean not null default false;
