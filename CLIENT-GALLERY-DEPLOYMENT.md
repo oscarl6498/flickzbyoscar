@@ -11,7 +11,7 @@ The website change is staged on branch `private-client-gallery`; it has not been
    The `public` value must be `false`.
 4. In **Edge Functions**, create a function named `flickz-gallery` and paste the contents of `supabase/functions/flickz-gallery/index.ts`.
 5. Deploy it with JWT verification disabled for the public code-entry endpoint. The repository has `supabase/config.toml` set to `verify_jwt = false`. If using the Supabase dashboard editor, select the option to disable JWT verification for this function.
-6. Supabase Edge Functions need the built-in `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` secrets. Do not place the service-role key in this HTML file or in GitHub.
+6. The function reads Supabase's built-in `SUPABASE_URL` and `SUPABASE_SECRET_KEYS` environment variables. No secret needs to be pasted into the website or committed to GitHub. Never expose a secret key in the browser.
 
 ## Admin account
 
@@ -30,7 +30,7 @@ An account must exist in **Authentication → Users**. Sign in under **Client Po
 
 - The bucket is private; no permanent public image URLs are used.
 - Public gallery lookup, selection submission, and downloads go through the Edge Function. It checks the album code, verifies each selected photo belongs to that album, and applies a per-IP hashed rate limit (20 requests per 15 minutes).
-- The Edge Function uses the service-role key only server-side. Never add this key to client-side code.
+- The Edge Function uses the project's default Supabase secret key only server-side to perform privileged operations. Never add this secret key to client-side code.
 - The current Edge Function signs view/download URLs for 60 minutes. Access codes are bearer credentials: share each code only with its intended recipient.
 - Admin approval is only available when Instagram permission was recorded as granted. The database also enforces this condition.
 - Keep the Supabase admin password private. Do not create admin accounts for clients.
