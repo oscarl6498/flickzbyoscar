@@ -32,4 +32,5 @@ An account must exist in **Authentication → Users**. Sign in under **Client Po
 - Public gallery lookup, selection submission, and downloads go through the Edge Function. It checks the album code, verifies each selected photo belongs to that album, and applies a per-IP hashed rate limit (20 requests per 15 minutes).
 - The Edge Function uses the service-role key only server-side. Never add this key to client-side code.
 - The current Edge Function signs view/download URLs for 60 minutes. Access codes are bearer credentials: share each code only with its intended recipient.
+- Admin approval is only available when Instagram permission was recorded as granted. The database also enforces this condition.
 - Keep the Supabase admin password private. Do not create admin accounts for clients.
