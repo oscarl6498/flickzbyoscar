@@ -9,7 +9,7 @@
 1. Confirm the original gallery tables exist: `flickz_albums`, `flickz_photos`, and `flickz_selections`.
 2. Run `supabase/migrations/202611100001_private_gallery_edge_security.sql` in Supabase SQL Editor.
 3. In Supabase Dashboard > Edge Functions, deploy `supabase/functions/flickz-gallery/index.ts` as function name `flickz-gallery`.
-4. Ensure the function environment has the built-in project URL, anon key, and service-role key. Do not place the service-role key in website JavaScript or GitHub.
+4. Supabase automatically provides SUPABASE_URL, SUPABASE_PUBLISHABLE_KEYS, and SUPABASE_SECRET_KEYS to Edge Functions. The function uses the default publishable key to validate the admin user's access token and the default secret key only for server-side database/storage operations. Never put the secret key in website JavaScript or GitHub.
 5. Keep `verify_jwt = false` for this function because client gallery-code requests are not Supabase Auth sessions. The function validates access codes and rate-limits lookups itself; the admin selection-download action independently verifies the user's JWT.
 6. Your admin user must be the owner of albums (the app sets `owner_id` from the authenticated user).
 
