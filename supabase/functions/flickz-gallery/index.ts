@@ -91,12 +91,16 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return reply(405, { error: "Method not allowed." });
 
-  let body: Record<string, unknown>;
+  let parsed: unknown;
   try {
-    body = await req.json();
+    parsed = await req.json();
   } catch {
     return reply(400, { error: "Invalid request." });
   }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    return reply(400, { error: "Invalid request." });
+  }
+  const body = parsed as Record<string, unknown>;
 
   const action = String(body.action ?? "");
   if (!["lookup", "submit", "download"].includes(action)) {
