@@ -18,9 +18,9 @@
 - Create an album; send its generated code privately to the client.
 - Upload multiple JPG, PNG, or WebP images (up to 25 MB each).
 - Clients enter the code, select photos, and submit selections.
-- The Instagram permission checkbox is optional and stored with each selection. For minors, obtain parent/guardian consent and any necessary release before posting.
+- The Instagram permission checkbox is optional and stored with each selection. A separate photographer approval status is available only after permission is granted. For minors, a parent/legal guardian must grant permission and any required release must be obtained before posting.
 - Client downloads use short-lived signed URLs. Admin can download selected photos with owner-verified links.
-- Instagram publishing is manual; nothing is automatically posted.
+- The admin dashboard shows thumbnails with short-lived download links. You can approve a consented selection for Instagram or revoke that approval. Instagram publishing is manual; nothing is automatically posted.
 
 ## Notes
 - The existing homepage and portfolio photo files are preserved.
