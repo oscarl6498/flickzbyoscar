@@ -1,0 +1,2 @@
+[functions.flickz-gallery]
+verify_jwt = false
