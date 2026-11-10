@@ -112,12 +112,11 @@
     button.disabled = true; button.textContent = "PREPARING DOWNLOADS...";
     let downloaded = 0;
     try {
+      // Refresh once so a gallery left open for a while still has valid links.
+      const fresh = await publicCall("lookup", { code: currentCode });
+      const freshPhotos = new Map((fresh.photos || []).map(photo => [photo.id, photo]));
       for (const id of ids) {
-        let photo = currentPhotos.find(item => item.id === id);
-        if (!photo) continue;
-        // Refresh signed URL before each download so a long-open gallery still works.
-        const fresh = await publicCall("lookup", { code: currentCode });
-        photo = fresh.photos.find(item => item.id === id);
+        const photo = freshPhotos.get(id);
         if (!photo?.signed_url) continue;
         const response = await fetch(photo.signed_url);
         if (!response.ok) continue;
@@ -160,19 +159,34 @@
     albums = albumRows || []; renderAlbums();
     const { data: submissions, error: submissionsError } = await sb.from("flickz_selections").select("id,album_id,photo_ids,instagram_consent,created_at").order("created_at", { ascending: false }).limit(100);
     if (submissionsError) throw submissionsError;
-    const photoIds = [...new Set((submissions || []).flatMap(item => item.photo_ids || []))];
-    let photoRows = [];
-    if (photoIds.length) {
-      const { data, error } = await sb.from("flickz_photos").select("id,album_id,file_name,storage_path").in("id", photoIds);
-      if (error) throw error;
-      photoRows = data || [];
+    const selectionIds = (submissions || []).map(item => item.id);
+    let linksBySelection = new Map();
+    if (selectionIds.length) {
+      const result = await adminCall("admin-selection-links", { selection_ids: selectionIds });
+      linksBySelection = new Map((result.selections || []).map(item => [item.id, item.files || []]));
     }
-    const photoMap = new Map(photoRows.map(photo => [photo.id, photo]));
     el("adminSubmissions").innerHTML = (submissions || []).map(item => {
       const album = albums.find(entry => entry.id === item.album_id);
-      const names = (item.photo_ids || []).map(id => photoMap.get(id)?.file_name).filter(Boolean);
-      return `<div class="admin-submission"><strong>${safe(album?.title || "Album")}</strong><br>${names.length} selected photo(s) · Instagram permission: <b>${item.instagram_consent ? "YES" : "NO"}</b><br><small>${new Date(item.created_at).toLocaleString()}</small><br>${names.map(safe).join("<br>")}</div>`;
+      const files = linksBySelection.get(item.id) || [];
+      const thumbs = files.map(file => `<a href="${safe(file.signed_url)}" target="_blank" rel="noopener noreferrer" download="${safe(file.file_name)}" title="Download ${safe(file.file_name)}"><img src="${safe(file.signed_url)}" alt="${safe(file.file_name)}" style="width:112px;height:84px;object-fit:cover;border-radius:5px;margin:8px 7px 0 0"></a>`).join("");
+      const approval = item.instagram_approved ? "APPROVED" : (item.instagram_consent ? "CONSENT RECEIVED — REVIEW NEEDED" : "NO CONSENT");
+      const approvalControl = item.instagram_consent
+        ? '<button class="btn btn-outline review-instagram" type="button" data-id="' + safe(item.id) + '" data-approved="' + String(!!item.instagram_approved) + '">' + (item.instagram_approved ? "UNAPPROVE" : "APPROVE FOR INSTAGRAM") + '</button>'
+        : '<span class="portal-note">Cannot approve: Instagram permission was not granted.</span>';
+      return `<div class="admin-submission"><strong>${safe(album?.title || "Album")}</strong><br>${files.length} selected photo(s) · Instagram permission: <b>${item.instagram_consent ? "YES" : "NO"}</b><br>Instagram review: <b>${approval}</b><br><small>${new Date(item.created_at).toLocaleString()}</small><div>${thumbs}</div><div style="margin-top:10px">${approvalControl}</div></div>`;
     }).join("") || '<p class="portal-note">No client selections submitted yet.</p>';
+    el("adminSubmissions").querySelectorAll(".review-instagram").forEach(button => button.addEventListener("click", async () => {
+      button.disabled = true;
+      const approved = button.dataset.approved !== "true";
+      try {
+        await adminCall("admin-review-selection", { selection_id: button.dataset.id, approved });
+        await refreshAdmin();
+        status("adminStatus", approved ? "Selection approved for manual Instagram review." : "Instagram approval removed.");
+      } catch (error) {
+        status("adminStatus", error.message || "Could not update Instagram approval.");
+        button.disabled = false;
+      }
+    }));
   }
 
   loginForm?.addEventListener("submit", async event => {
