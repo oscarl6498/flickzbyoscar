@@ -1,171 +1,1298 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Flickz By Oscar — sports, events, and creative photography. Book a shoot, explore the portfolio, and discover presets and prints.">
-<title>Flickz By Oscar | Photography</title>
+<meta name="theme-color" content="#05080c">
+<meta name="description" content="Flickz By Oscar — sports, events, and creative photography.">
+<title>FLICKZ BY OSCAR | Photography</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-:root{--bg:#080808;--panel:#111;--panel2:#171717;--text:#f5f5f5;--muted:#a5a5a5;--line:#292929;--accent:#fff}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.55}a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit}.wrap{width:min(1160px,92%);margin:auto}
-header{position:sticky;top:0;z-index:10;background:rgba(8,8,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-.nav{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{font-weight:900;letter-spacing:1.8px;font-size:18px}.brand span{color:#999}.navlinks{display:flex;align-items:center;gap:25px;font-size:13px;color:#ccc}.navlinks a:hover,.footer a:hover{color:white}.menu{display:none;background:none;border:1px solid var(--line);color:white;padding:8px 12px;border-radius:6px}
-.hero{min-height:620px;display:flex;align-items:center;position:relative;overflow:hidden;border-bottom:1px solid var(--line);background:radial-gradient(ellipse at 75% 40%,#303030 0%,#151515 28%,#080808 70%)}
-.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,8,.96),rgba(8,8,8,.52) 60%,rgba(8,8,8,.2));pointer-events:none}
-.hero-inner{position:relative;z-index:1;padding:90px 0;max-width:720px}.eyebrow{font-size:11px;letter-spacing:4px;color:#aaa;text-transform:uppercase;font-weight:bold}.hero h1{font-size:clamp(48px,8vw,94px);line-height:.95;letter-spacing:-4px;margin:20px 0}.hero h1 span{color:#8d8d8d}.hero p{max-width:520px;color:#c2c2c2;font-size:17px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}.btn{display:inline-flex;align-items:center;justify-content:center;padding:13px 20px;border:1px solid white;background:white;color:#080808;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;border-radius:3px;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px);background:#ddd}.btn.outline{background:transparent;color:white;border-color:#555}.btn.outline:hover{border-color:white;background:#171717}
-section{padding:88px 0;border-bottom:1px solid var(--line)}.section-top{display:flex;justify-content:space-between;align-items:end;gap:25px;margin-bottom:34px}.kicker{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#888}.section-top h2{font-size:clamp(30px,5vw,48px);letter-spacing:-1.5px;margin:8px 0 0}.section-top p{max-width:390px;color:var(--muted);font-size:14px;margin:0}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.tile{min-height:240px;position:relative;overflow:hidden;background:linear-gradient(135deg,#242424,#0f0f0f);border:1px solid #292929;display:flex;align-items:end;padding:22px}.tile:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.85),transparent 70%)}.tile:nth-child(2){background:linear-gradient(145deg,#343434,#121212)}.tile:nth-child(3){background:linear-gradient(120deg,#1e1e1e,#383838)}.tile:nth-child(4){background:linear-gradient(135deg,#333,#111)}.tile:nth-child(5){background:linear-gradient(135deg,#111,#303030)}.tile:nth-child(6){background:linear-gradient(135deg,#292929,#090909)}.tile-content{position:relative;z-index:1}.tile small{color:#bbb;letter-spacing:2px;font-size:9px}.tile h3{margin:5px 0 0;font-size:22px}
-.about{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}.about-art{min-height:350px;border:1px solid #333;background:linear-gradient(135deg,#333,#0c0c0c 60%);display:flex;align-items:center;justify-content:center;text-align:center}.monogram{font-size:clamp(80px,14vw,160px);font-weight:900;letter-spacing:-12px;color:#555}.about-copy h2{font-size:42px;line-height:1.05;margin:12px 0 20px}.about-copy p{color:var(--muted)}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{padding:25px;background:var(--panel);border:1px solid var(--line)}.card .number{font-size:11px;color:#777;letter-spacing:2px}.card h3{font-size:21px;margin:18px 0 8px}.card p{color:var(--muted);font-size:14px;min-height:65px}.price{font-size:12px;color:#ddd;letter-spacing:1px}
-.booking{display:grid;grid-template-columns:.8fr 1.2fr;gap:50px}.booking-copy h2{font-size:clamp(34px,5vw,52px);line-height:1;margin:12px 0 18px}.booking-copy p{color:var(--muted)}.form{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#aaa}.field input,.field select,.field textarea{width:100%;background:#111;border:1px solid #333;color:white;padding:13px;border-radius:2px;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:#aaa}.field textarea{min-height:120px;resize:vertical}.form-note{font-size:11px;color:#888;grid-column:1/-1}
-.contact-box{background:#111;border:1px solid #303030;padding:32px;display:flex;align-items:center;justify-content:space-between;gap:25px}.contact-box h3{font-size:28px;margin:0 0 7px}.contact-box p{color:var(--muted);margin:0}
-footer{padding:32px 0;color:#888;font-size:12px}.footer{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.footer-links{display:flex;gap:18px}
-.notice{margin-top:12px;color:#aaa;font-size:12px;min-height:18px}
+:root {
+  --bg: #05080c;
+  --panel: #0c131c;
+  --panel2: #111c28;
+  --blue: #55cfff;
+  --blue2: #9be5ff;
+  --white: #f5faff;
+  --muted: #91a0ad;
+  --line: rgba(180,220,255,.15);
+}
 
-.instagram-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
-.instagram-grid blockquote{min-width:0!important}
-@media(max-width:900px){.instagram-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:760px){.navlinks{display:none;position:absolute;top:76px;left:0;right:0;background:#090909;padding:20px 4%;border-bottom:1px solid #333;flex-direction:column;align-items:flex-start}.navlinks.open{display:flex}.menu{display:block}.hero{min-height:560px}.hero h1{letter-spacing:-2px}.section-top{display:block}.section-top p{margin-top:14px}.grid,.cards{grid-template-columns:1fr 1fr}.about,.booking{grid-template-columns:1fr;gap:28px}.contact-box{display:block}.contact-box .actions{margin-top:22px}}
-@media(max-width:480px){.grid,.cards{grid-template-columns:1fr}.tile{min-height:190px}.form{grid-template-columns:1fr}.field.full{grid-column:auto}.hero p{font-size:15px}}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 85px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: Inter, Arial, sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(85,207,255,.09), transparent 30%),
+    radial-gradient(circle at 90% 65%, rgba(85,207,255,.055), transparent 35%);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+.wrap {
+  width: min(1200px, 90%);
+  margin: auto;
+}
+
+/* LOADING CAMERA */
+
+#camera-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #030405;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  animation: loaderOut .8s ease 3.1s forwards;
+}
+
+.camera {
+  width: 160px;
+  height: 108px;
+  background: #000;
+  border: 3px solid white;
+  border-radius: 17px;
+  position: relative;
+  animation: cameraFly 1.2s cubic-bezier(.2,.8,.2,1) forwards;
+  box-shadow: 0 0 45px rgba(255,255,255,.08);
+}
+
+.camera-top {
+  position: absolute;
+  width: 48px;
+  height: 17px;
+  top: -19px;
+  left: 22px;
+  background: #000;
+  border: 3px solid white;
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+}
+
+.camera-button {
+  position: absolute;
+  width: 14px;
+  height: 7px;
+  left: 15px;
+  top: -9px;
+  background: #000;
+  border: 2px solid white;
+  border-radius: 4px;
+}
+
+.camera-flash {
+  position: absolute;
+  width: 20px;
+  height: 14px;
+  right: 13px;
+  top: 13px;
+  background: #000;
+  border: 2px solid white;
+  border-radius: 3px;
+}
+
+.camera-lens {
+  position: absolute;
+  width: 67px;
+  height: 67px;
+  top: 17px;
+  left: 44px;
+  background: #000;
+  border: 4px solid white;
+  border-radius: 50%;
+}
+
+.camera-lens::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 3px solid white;
+  border-radius: 50%;
+}
+
+.camera-lens::after {
+  content: "";
+  position: absolute;
+  inset: 19px;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.loader-name {
+  margin-top: 45px;
+  font-size: 11px;
+  letter-spacing: 6px;
+  opacity: 0;
+  animation: nameAppear .7s ease 1.5s forwards;
+}
+
+.flash-light {
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+  animation: cameraFlash .35s ease 2.25s;
+}
+
+@keyframes cameraFly {
+  0% { transform: translateY(-550px) rotate(-25deg) scale(.5); }
+  70% { transform: translateY(15px) rotate(7deg) scale(1.1); }
+  100% { transform: translateY(0) rotate(0) scale(1); }
+}
+
+@keyframes cameraFlash {
+  0%,100% { opacity: 0; }
+  30% { opacity: 1; }
+}
+
+@keyframes nameAppear {
+  to { opacity: 1; }
+}
+
+@keyframes loaderOut {
+  to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+
+/* NAVIGATION */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(5,8,12,.82);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand {
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.brand span {
+  color: var(--blue);
+}
+
+.navlinks {
+  display: flex;
+  gap: 23px;
+  align-items: center;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+}
+
+.navlinks a {
+  color: #c5d0da;
+  transition: .25s;
+}
+
+.navlinks a:hover {
+  color: var(--blue);
+  text-shadow: 0 0 15px rgba(85,207,255,.5);
+}
+
+.menu {
+  display: none;
+  color: white;
+  background: transparent;
+  border: 1px solid #425466;
+  padding: 9px 13px;
+  cursor: pointer;
+}
+
+/* HERO */
+
+.hero {
+  min-height: 740px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 75% 40%, rgba(85,207,255,.18), transparent 32%),
+    radial-gradient(ellipse at 80% 90%, #12283b, transparent 50%),
+    linear-gradient(120deg, #030507, #0c1722 65%, #05080c);
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  width: 550px;
+  height: 550px;
+  right: -100px;
+  top: 50px;
+  border: 1px solid rgba(85,207,255,.15);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 55px rgba(85,207,255,.025),
+    0 0 0 110px rgba(85,207,255,.02);
+  animation: orbit 20s linear infinite;
+}
+
+@keyframes orbit {
+  to { transform: rotate(360deg); }
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  padding: 110px 0;
+  animation: revealUp 1s ease both;
+}
+
+.eyebrow {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-family: "Barlow Condensed", Impact, sans-serif;
+  font-size: clamp(75px, 13vw, 155px);
+  line-height: .82;
+  letter-spacing: -3px;
+  margin: 28px 0;
+  font-weight: 900;
+}
+
+.hero h1 span {
+  display: block;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--blue);
+  filter: drop-shadow(0 0 20px rgba(85,207,255,.15));
+}
+
+.hero p {
+  max-width: 470px;
+  color: #aebdca;
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+  margin-top: 30px;
+}
+
+.btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 23px;
+  border: 1px solid var(--blue);
+  background: var(--blue);
+  color: #03101a;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.btn:hover {
+  background: white;
+  border-color: white;
+  box-shadow: 0 0 30px rgba(85,207,255,.35);
+  transform: translateY(-4px);
+}
+
+.btn.outline {
+  color: white;
+  background: transparent;
+  border-color: #506779;
+}
+
+.btn.outline:hover {
+  color: var(--blue);
+  border-color: var(--blue);
+  background: rgba(85,207,255,.06);
+}
+
+.hero-label {
+  position: absolute;
+  right: 5%;
+  bottom: 35px;
+  color: #8294a4;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
+
+/* MARQUEE */
+
+.marquee {
+  padding: 19px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  background: rgba(85,207,255,.045);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 4px;
+}
+
+.marquee-inner {
+  display: inline-block;
+  animation: marquee 27s linear infinite;
+}
+
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
+/* SECTIONS */
+
+section {
+  padding: 100px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.section-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.kicker {
+  display: inline-block;
+  color: var(--blue);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--blue);
+}
+
+.section-top h2,
+.about-copy h2,
+.booking-copy h2 {
+  font-family: "Barlow Condensed", Impact, sans-serif;
+  font-size: clamp(45px, 7vw, 76px);
+  line-height: .95;
+  letter-spacing: -1px;
+  margin-top: 15px;
+  text-transform: uppercase;
+}
+
+.section-top p {
+  max-width: 390px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* GALLERY */
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.photo {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: #101923;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform .7s, filter .5s;
+}
+
+.photo:hover img {
+  transform: scale(1.09);
+  filter: brightness(.72) saturate(1.2);
+}
+
+.photo::after {
+  content: "";
+  position: absolute;
+  inset: 35% 0 0;
+  background: linear-gradient(transparent, rgba(0,0,0,.85));
+  pointer-events: none;
+}
+
+.photo-label {
+  position: absolute;
+  z-index: 2;
+  bottom: 18px;
+  left: 18px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.photo:nth-child(3n + 2) {
+  transform: translateY(22px);
+}
+
+/* ABOUT */
+
+.about {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 55px;
+}
+
+.about-art {
+  min-height: 430px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at center, #233c50, #101a24 65%, #06090d);
+}
+
+.about-art::before {
+  content: "F/O";
+  font-family: "Barlow Condensed", Impact, sans-serif;
+  font-size: clamp(140px, 20vw, 220px);
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--blue);
+  text-shadow: 0 0 55px rgba(85,207,255,.15);
+}
+
+.about-art::after {
+  content: "BEHIND THE LENS";
+  position: absolute;
+  left: 25px;
+  bottom: 25px;
+  color: var(--blue);
+  font-size: 10px;
+  letter-spacing: 4px;
+}
+
+.about-copy h2 {
+  margin-bottom: 22px;
+}
+
+.about-copy p {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+/* SERVICES */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.card {
+  padding: 30px;
+  background: linear-gradient(145deg, #121e2a, #090e14);
+  border: 1px solid var(--line);
+  transition: .35s;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  border-color: var(--blue);
+  box-shadow: 0 18px 45px rgba(85,207,255,.09);
+}
+
+.card-number {
+  color: var(--blue);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.card h3 {
+  font-size: 22px;
+  margin: 22px 0 12px;
+}
+
+.card p {
+  color: var(--muted);
+  font-size: 13px;
+  min-height: 65px;
+}
+
+.price {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin-top: 22px;
+}
+
+/* BOOKING */
+
+.booking {
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  gap: 50px;
+}
+
+.booking-copy h2 {
+  margin-bottom: 20px;
+}
+
+.booking-copy p {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field.full {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  color: #aab9c7;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 14px;
+  color: white;
+  background: #0c131c;
+  border: 1px solid #293b4c;
+  outline: none;
+  border-radius: 3px;
+  transition: .25s;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 15px rgba(85,207,255,.09);
+}
+
+.field textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.notice {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.turnstile-wrap {
+  margin: 8px 0;
+  min-height: 65px;
+}
+
+/* SHOP */
+
+.shop-note {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 20px;
+}
+
+/* INSTAGRAM */
+
+.instagram-box {
+  padding: 45px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 85% 20%, rgba(85,207,255,.12), transparent 35%),
+    #0b121b;
+}
+
+/* CONTACT */
+
+.contact-box {
+  padding: 45px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 25px;
+  border: 1px solid rgba(85,207,255,.25);
+  background:
+    radial-gradient(ellipse at 90% 20%, rgba(85,207,255,.15), transparent 40%),
+    #0b121b;
+}
+
+.contact-box h3 {
+  font-family: "Barlow Condensed", Impact, sans-serif;
+  font-size: clamp(35px, 6vw, 60px);
+  line-height: .95;
+  margin: 14px 0;
+  text-transform: uppercase;
+}
+
+.contact-box p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* FOOTER */
+
+footer {
+  padding: 35px 0;
+  color: #81909e;
+  font-size: 11px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-links a:hover {
+  color: var(--blue);
+}
+
+/* CLICK EFFECTS */
+
+.click-ripple {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(85,207,255,.6);
+  pointer-events: none;
+  transform: translate(-50%,-50%) scale(0);
+  animation: rippleOut .65s ease-out forwards;
+  z-index: 10;
+}
+
+@keyframes rippleOut {
+  to {
+    transform: translate(-50%,-50%) scale(17);
+    opacity: 0;
+  }
+}
+
+.click-glow {
+  animation: bluePulse .45s ease;
+}
+
+@keyframes bluePulse {
+  0% { box-shadow: 0 0 0 rgba(85,207,255,0); }
+  50% { box-shadow: 0 0 35px rgba(85,207,255,.5); }
+  100% { box-shadow: 0 0 0 rgba(85,207,255,0); }
+}
+
+/* SCROLL REVEAL */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(35px);
+  transition: opacity .8s ease, transform .8s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* MOBILE */
+
+@media(max-width: 900px) {
+  .navlinks { gap: 12px; font-size: 9px; }
+}
+
+@media(max-width: 760px) {
+  .nav { min-height: 68px; }
+  .menu { display: block; }
+
+  .navlinks {
+    display: none;
+    position: absolute;
+    top: 68px;
+    left: 0;
+    right: 0;
+    padding: 25px 5%;
+    background: #080e15;
+    border-bottom: 1px solid var(--line);
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 12px;
+  }
+
+  .navlinks.open { display: flex; }
+
+  .hero { min-height: 640px; }
+  .hero h1 { font-size: clamp(70px, 16vw, 110px); }
+
+  .section-top { display: block; }
+  .section-top p { margin-top: 15px; }
+
+  .about, .booking {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .cards { grid-template-columns: 1fr 1fr; }
+
+  .contact-box {
+    display: block;
+    padding: 28px;
+  }
+}
+
+@media(max-width: 520px) {
+  section { padding: 75px 0; }
+  .gallery, .cards { grid-template-columns: 1fr; }
+  .photo:nth-child(3n + 2) { transform: none; }
+  .form { grid-template-columns: 1fr; }
+  .field.full { grid-column: auto; }
+  .hero-label { display: none; }
+  .instagram-box { padding: 25px; }
+}
+
+@media(prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
 </style>
+
+<!-- Cloudflare Turnstile script -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
+
 <body>
-<header><div class="wrap nav">
-<a class="brand" href="#home">FLICKZ <span>BY OSCAR</span></a>
-<nav class="navlinks" id="navlinks"><a href="#portfolio">PORTFOLIO</a><a href="#instagram-work">INSTAGRAM PHOTOS</a><a href="#about">ABOUT</a><a href="#services">SERVICES</a><a href="#booking">BOOK A SHOOT</a><a href="#store">SHOP</a><a href="#contact">CONTACT</a></nav>
-<button class="menu" id="menuBtn" aria-label="Open navigation">MENU</button>
-</div></header>
+
+<div id="camera-loader">
+  <div class="camera">
+    <div class="camera-top"></div>
+    <div class="camera-button"></div>
+    <div class="camera-flash"></div>
+    <div class="camera-lens"></div>
+  </div>
+  <div class="loader-name">FLICKZ BY OSCAR</div>
+  <div class="flash-light"></div>
+</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#home">FLICKZ <span>BY OSCAR.</span></a>
+
+    <nav class="navlinks" id="navlinks">
+      <a href="#portfolio">PORTFOLIO</a>
+      <a href="#about">ABOUT</a>
+      <a href="#services">SERVICES</a>
+      <a href="#booking">BOOK</a>
+      <a href="#instagram">INSTAGRAM</a>
+      <a href="#shop">SHOP</a>
+      <a href="#contact">CONTACT</a>
+    </nav>
+
+    <button class="menu" id="menuBtn" type="button">MENU</button>
+  </div>
+</header>
+
 <main>
-<section class="hero" id="home"><div class="wrap hero-inner">
-<div class="eyebrow">Sports · Events · Creative Photography</div>
-<h1>CAPTURE<br><span>THE MOMENT.</span></h1>
-<p>Flickz By Oscar brings the energy, emotion, and details of every moment into focus. From game day to special events, every frame tells a story.</p>
-<div class="actions"><a class="btn" href="#booking">Request a Booking</a><a class="btn outline" href="#portfolio">Explore Portfolio</a></div>
-</div></section>
-<section id="portfolio"><div class="wrap">
-<div class="section-top"><div><div class="kicker">Selected work</div><h2>The Portfolio.</h2></div><p>A look at the moments, people, and details behind the lens. Replace these sample panels with your own best photos.</p></div>
-<div class="grid">
-<a class="tile" href="#booking"><div class="tile-content"><small>01 / COURTSIDE</small><h3>Basketball</h3></div></a>
-<a class="tile" href="#booking"><div class="tile-content"><small>02 / IN MOTION</small><h3>Sports</h3></div></a>
-<a class="tile" href="#booking"><div class="tile-content"><small>03 / THE DETAILS</small><h3>Food</h3></div></a>
-<a class="tile" href="#booking"><div class="tile-content"><small>04 / BIG MOMENTS</small><h3>Parties & Events</h3></div></a>
-<a class="tile" href="#booking"><div class="tile-content"><small>05 / PEOPLE</small><h3>Portraits</h3></div></a>
-<a class="tile" href="#booking"><div class="tile-content"><small>06 / YOUR STORY</small><h3>More Work</h3></div></a>
-</div>
-</div></section>
 
-<section id="instagram-work"><div class="wrap">
-<div class="section-top"><div><div class="kicker">Latest from Instagram</div><h2>On the Gram.</h2></div><p>Selected posts from @flickzbyoscar. Open any post to view it on Instagram.</p></div>
-<div class="instagram-grid">
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DfhRMZIEbSu/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#111;border:1px solid #292929;border-radius:4px;margin:0 auto;max-width:540px;min-width:260px;width:100%;"></blockquote>
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/Dfe-qqDkbTh/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#111;border:1px solid #292929;border-radius:4px;margin:0 auto;max-width:540px;min-width:260px;width:100%;"></blockquote>
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/Dfdl4zDEU1x/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#111;border:1px solid #292929;border-radius:4px;margin:0 auto;max-width:540px;min-width:260px;width:100%;"></blockquote>
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DfchbT9EWqx/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#111;border:1px solid #292929;border-radius:4px;margin:0 auto;max-width:540px;min-width:260px;width:100%;"></blockquote>
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DfcN003Ee6n/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#111;border:1px solid #292929;border-radius:4px;margin:0 auto;max-width:540px;min-width:260px;width:100%;"></blockquote>
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DfZs3Tikcjo/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#111;border:1px solid #292929;border-radius:4px;margin:0 auto;max-width:540px;min-width:260px;width:100%;"></blockquote>
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DfWI8QPEXYP/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#111;border:1px solid #292929;border-radius:4px;margin:0 auto;max-width:540px;min-width:260px;width:100%;"></blockquote>
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DfWIeq5EbP2/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#111;border:1px solid #292929;border-radius:4px;margin:0 auto;max-width:540px;min-width:260px;width:100%;"></blockquote>
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DfWIGdPkSuT/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#111;border:1px solid #292929;border-radius:4px;margin:0 auto;max-width:540px;min-width:260px;width:100%;"></blockquote>
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DfSMw8RkZhE/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#111;border:1px solid #292929;border-radius:4px;margin:0 auto;max-width:540px;min-width:260px;width:100%;"></blockquote>
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DfSGLnYkdvw/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#111;border:1px solid #292929;border-radius:4px;margin:0 auto;max-width:540px;min-width:260px;width:100%;"></blockquote>
-</div>
-<div class="actions"><a class="btn outline" href="https://www.instagram.com/flickzbyoscar/" target="_blank" rel="noopener">View Instagram Profile</a></div>
-</div></section>
+<section class="hero" id="home">
+  <div class="wrap hero-inner">
+    <div class="eyebrow">SPORTS / EVENTS / CREATIVE PHOTOGRAPHY</div>
 
-<section id="about"><div class="wrap about">
-<div class="about-art"><div><div class="monogram">F/O</div><div class="eyebrow">Flickz By Oscar</div></div></div>
-<div class="about-copy"><div class="kicker">Behind the camera</div><h2>More than a picture. It's a feeling.</h2><p>I'm Oscar, the photographer behind Flickz By Oscar. I focus on capturing the action, atmosphere, and small details that make each moment memorable.</p><p>Whether it's a basketball game, a celebration, or a restaurant's signature dish, the goal is simple: create images you'll want to look back on.</p><a class="btn outline" href="#contact">Get in Touch</a></div>
-</div></section>
-<section id="services"><div class="wrap">
-<div class="section-top"><div><div class="kicker">What I shoot</div><h2>Services.</h2></div><p>Have a different project in mind? Send a request and we'll talk through the details.</p></div>
-<div class="cards">
-<div class="card"><div class="number">01 / SPORTS</div><h3>Sports Photography</h3><p>Game action, player moments, team coverage, and highlight galleries.</p><div class="price">REQUEST A QUOTE</div></div>
-<div class="card"><div class="number">02 / EVENTS</div><h3>Events & Parties</h3><p>Birthday parties, celebrations, and the moments that bring everyone together.</p><div class="price">REQUEST A QUOTE</div></div>
-<div class="card"><div class="number">03 / FOOD</div><h3>Food Photography</h3><p>Menu items, restaurant details, and images made to show off your food.</p><div class="price">REQUEST A QUOTE</div></div>
+    <h1>CAPTURE <span>THE MOMENT.</span></h1>
+
+    <p>
+      Every moment has a story. Every frame has a feeling.
+      Welcome to Flickz By Oscar — where the action never stops.
+    </p>
+
+    <div class="actions">
+      <a class="btn" href="#booking">BOOK A SHOOT ↗</a>
+      <a class="btn outline" href="#portfolio">EXPLORE THE WORK</a>
+    </div>
+  </div>
+
+  <div class="hero-label">FLICKZ BY OSCAR · PHOTOGRAPHY</div>
+</section>
+
+<div class="marquee">
+  <div class="marquee-inner">
+    FLICKZ BY OSCAR ✦ CAPTURE THE MOMENT ✦ SPORTS PHOTOGRAPHY ✦ EVENTS ✦
+    CREATIVE PHOTOGRAPHY ✦ FLICKZ BY OSCAR ✦ CAPTURE THE MOMENT ✦
+    SPORTS PHOTOGRAPHY ✦ EVENTS ✦
+  </div>
 </div>
-</div></section>
-<section id="booking"><div class="wrap booking">
-<div class="booking-copy"><div class="kicker">Let's make it happen</div><h2>Book a shoot.</h2><p>Send a booking request with a few details. I'll review it and get back to you to discuss availability and pricing. Your request is not confirmed until we agree on the details.</p><p class="price">MANUAL APPROVAL · NO INSTANT BOOKINGS</p></div>
-<form class="form" id="bookingForm">
-<div class="field"><label for="name">Your name</label><input id="name" name="name" required placeholder="Full name"></div>
-<div class="field"><label for="contact">Best way to reach you</label><input id="contact" name="contact" required placeholder="Email or Instagram"></div>
-<div class="field"><label for="type">Type of shoot</label><select id="type" name="type" required><option value="">Choose one</option><option>Basketball / Sports</option><option>Party / Event</option><option>Food / Restaurant</option><option>Portrait</option><option>Other</option></select></div>
-<div class="field"><label for="date">Preferred date</label><input id="date" name="date" type="date"></div>
-<div class="field full"><label for="details">Tell me about the shoot</label><textarea id="details" name="details" placeholder="Location area, event details, what photos you need..."></textarea></div>
-<div class="field full"><button class="btn" type="submit">Send Booking Request by Text</button><div class="notice" id="formNotice" aria-live="polite"></div></div>
-<div class="form-note">This opens your messaging app with your request filled in. Review it and press Send. Avoid including private or sensitive information.</div>
-</form>
-</div></section>
-<section id="store"><div class="wrap">
-<div class="section-top"><div><div class="kicker">Digital downloads & prints</div><h2>The Shop.</h2></div><p>Get the looks behind the lens. Presets are delivered digitally after checkout.</p></div>
-<div class="cards">
-<div class="card">
-<div class="number">LIGHTROOM PRESET PACK</div>
-<h3>Flickz Signature Presets</h3>
-<p>A starter pack of my signature editing looks. Add your preset ZIP or DNG files to your checkout product.</p>
-<div class="price">PRICE SHOWN AT CHECKOUT</div>
-<a class="btn preset-buy" href="#store" data-product="signature">Buy Presets</a>
-</div>
-<div class="card">
-<div class="number">LIGHTROOM PRESET PACK</div>
-<h3>Courtside / Sports Presets</h3>
-<p>A sports-focused look for basketball and action photography. Add your product files and description.</p>
-<div class="price">PRICE SHOWN AT CHECKOUT</div>
-<a class="btn preset-buy" href="#store" data-product="sports">Buy Presets</a>
-</div>
-<div class="card">
-<div class="number">PHOTO PRINTS</div>
-<h3>Print Your Favorites</h3>
-<p>Interested in a print? Message me with the photo and size you're looking for.</p>
-<a class="btn outline" href="#contact">Ask About Prints</a>
-</div>
-</div>
-<p class="notice">Secure checkout and automatic preset delivery are activated once the product checkout links are added below.</p>
-</div></section>
-<section id="contact"><div class="wrap">
-<div class="contact-box"><div><div class="kicker">Let's connect</div><h3>Have a moment worth capturing?</h3><p>Reach out for bookings, collaborations, prints, or preset questions.</p></div>
-<div class="actions"><a class="btn" id="smsLink" href="sms:+19295039518">Text Me</a><a class="btn outline" id="igLink" href="https://www.instagram.com/flickzbyoscar/" target="_blank" rel="noopener">Instagram DM</a></div></div>
-</div></section>
+
+<section id="portfolio">
+  <div class="wrap">
+    <div class="section-top reveal">
+      <div>
+        <div class="kicker">01 / SELECTED WORK</div>
+        <h2>The Portfolio.</h2>
+      </div>
+      <p>Real moments. Real action. A collection of work captured through the lens of Flickz By Oscar.</p>
+    </div>
+
+    <div class="gallery">
+      <a class="photo reveal" href="photo-01.webp" target="_blank">
+        <img src="photo-01.webp" alt="Sports photograph 1" loading="lazy">
+        <div class="photo-label">01 / GAME TIME</div>
+      </a>
+      <a class="photo reveal" href="photo-02.webp" target="_blank">
+        <img src="photo-02.webp" alt="Sports photograph 2" loading="lazy">
+        <div class="photo-label">02 / THE ACTION</div>
+      </a>
+      <a class="photo reveal" href="photo-03.webp" target="_blank">
+        <img src="photo-03.webp" alt="Sports photograph 3" loading="lazy">
+        <div class="photo-label">03 / IN MOTION</div>
+      </a>
+      <a class="photo reveal" href="photo-04.webp" target="_blank">
+        <img src="photo-04.webp" alt="Sports photograph 4" loading="lazy">
+        <div class="photo-label">04 / THE MOMENT</div>
+      </a>
+      <a class="photo reveal" href="photo-05.webp" target="_blank">
+        <img src="photo-05.webp" alt="Sports photograph 5" loading="lazy">
+        <div class="photo-label">05 / GAME DAY</div>
+      </a>
+      <a class="photo reveal" href="photo-06.webp" target="_blank">
+        <img src="photo-06.webp" alt="Sports photograph 6" loading="lazy">
+        <div class="photo-label">06 / FOCUS</div>
+      </a>
+      <a class="photo reveal" href="photo-07.webp" target="_blank">
+        <img src="photo-07.webp" alt="Sports photograph 7" loading="lazy">
+        <div class="photo-label">07 / DETAILS</div>
+      </a>
+      <a class="photo reveal" href="photo-08.webp" target="_blank">
+        <img src="photo-08.webp" alt="Sports photograph 8" loading="lazy">
+        <div class="photo-label">08 / ENERGY</div>
+      </a>
+      <a class="photo reveal" href="photo-09.webp" target="_blank">
+        <img src="photo-09.webp" alt="Sports photograph 9" loading="lazy">
+        <div class="photo-label">09 / EXPERIENCE</div>
+      </a>
+      <a class="photo reveal" href="photo-10.webp" target="_blank">
+        <img src="photo-10.webp" alt="Sports photograph 10" loading="lazy">
+        <div class="photo-label">10 / FLICKZ</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap about">
+    <div class="about-art reveal"></div>
+
+    <div class="about-copy reveal">
+      <div class="kicker">02 / BEHIND THE CAMERA</div>
+      <h2>Not just pictures. Memories.</h2>
+      <p>
+        I'm Oscar, the photographer behind Flickz By Oscar.
+        I focus on capturing the action, atmosphere, and details
+        that make every moment worth remembering.
+      </p>
+      <p>
+        From game day to special events, the goal is to create
+        photos that bring you right back to the moment.
+      </p>
+      <a class="btn outline" href="#contact">GET IN TOUCH ↗</a>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <div class="section-top reveal">
+      <div>
+        <div class="kicker">03 / WHAT I DO</div>
+        <h2>Services.</h2>
+      </div>
+      <p>Different moments. Different stories. Let's capture yours.</p>
+    </div>
+
+    <div class="cards">
+      <div class="card reveal">
+        <div class="card-number">01 / SPORTS</div>
+        <h3>Sports Photography</h3>
+        <p>Game action, player portraits, team pictures, and highlight galleries.</p>
+        <div class="price">REQUEST A QUOTE ↗</div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-number">02 / EVENTS</div>
+        <h3>Events & Parties</h3>
+        <p>Birthdays, celebrations, and the moments that bring everyone together.</p>
+        <div class="price">REQUEST A QUOTE ↗</div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-number">03 / CREATIVE</div>
+        <h3>Creative Photography</h3>
+        <p>Portraits, food photography, and creative projects made to stand out.</p>
+        <div class="price">REQUEST A QUOTE ↗</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="booking">
+  <div class="wrap booking">
+    <div class="booking-copy reveal">
+      <div class="kicker">04 / LET'S WORK TOGETHER</div>
+      <h2>Make it a moment.</h2>
+      <p>Interested in booking a shoot? Fill out the form and send your request.</p>
+      <p>Your booking is not confirmed until availability and pricing are agreed upon.</p>
+    </div>
+
+    <form class="form reveal" id="bookingForm">
+      <div class="field">
+        <label for="name">Your name</label>
+        <input id="name" name="name" required placeholder="Full name">
+      </div>
+
+      <div class="field">
+        <label for="contactMethod">Email or Instagram</label>
+        <input id="contactMethod" name="contact" required placeholder="How can I reach you?">
+      </div>
+
+      <div class="field">
+        <label for="type">Type of shoot</label>
+        <select id="type" name="type" required>
+          <option value="">Choose one</option>
+          <option>Sports Photography</option>
+          <option>Team Photos</option>
+          <option>Party / Event</option>
+          <option>Food Photography</option>
+          <option>Portraits</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="date">Preferred date</label>
+        <input id="date" name="date" type="date">
+      </div>
+
+      <div class="field full">
+        <label for="details">Shoot details</label>
+        <textarea id="details" name="details" placeholder="Tell me about the shoot, location, and what you need..."></textarea>
+      </div>
+
+      <div class="field full">
+        <label>Bot verification</label>
+        <div class="turnstile-wrap">
+          <!-- Replace with your real Cloudflare Turnstile site key -->
+          <div class="cf-turnstile"
+               data-sitekey="YOUR_TURNSTILE_SITE_KEY"
+               data-theme="dark"></div>
+        </div>
+      </div>
+
+      <div class="field full">
+        <button class="btn" type="submit" id="bookingSubmit">SEND BOOKING REQUEST ↗</button>
+        <div class="notice" id="formNotice" aria-live="polite">
+          Complete the bot verification before sending your request.
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section id="instagram">
+  <div class="wrap">
+    <div class="instagram-box reveal">
+      <div class="kicker">05 / FOLLOW THE JOURNEY</div>
+      <h2 class="section-top h2">Instagram.</h2>
+      <p style="color:var(--muted);margin-top:15px">
+        More photos, more moments, and behind-the-scenes content.
+      </p>
+      <div class="actions">
+        <a class="btn" href="https://www.instagram.com/flickzbyoscar/" target="_blank" rel="noopener">
+          FOLLOW @FLICKZBYOSCAR ↗
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="shop">
+  <div class="wrap">
+    <div class="section-top reveal">
+      <div>
+        <div class="kicker">06 / DIGITAL PRODUCTS</div>
+        <h2>The Shop.</h2>
+      </div>
+      <p>Editing looks and photography products from Flickz By Oscar.</p>
+    </div>
+
+    <div class="cards">
+      <div class="card reveal">
+        <div class="card-number">01 / PRESETS</div>
+        <h3>Signature Presets</h3>
+        <p>Editing looks inspired by the Flickz By Oscar style.</p>
+        <div class="price">$20 USD</div>
+        <div class="notice">Checkout link coming soon.</div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-number">02 / SPORTS</div>
+        <h3>Sports Presets</h3>
+        <p>Editing looks made for action and sports photography.</p>
+        <div class="price">$50 USD</div>
+        <div class="notice">Checkout link coming soon.</div>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-number">03 / PRINTS</div>
+        <h3>Photo Prints</h3>
+        <p>Ask about getting your favorite photos printed.</p>
+        <a class="btn outline" href="#contact">ASK ABOUT PRINTS</a>
+      </div>
+    </div>
+
+    <p class="shop-note">Prices are displayed in USD. Checkout links will be added when the products are ready.</p>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-box reveal">
+      <div>
+        <div class="kicker">07 / GET CONNECTED</div>
+        <h3>Have a moment worth capturing?</h3>
+        <p>Let's make something memorable.</p>
+      </div>
+
+      <div class="actions">
+        <a class="btn" href="sms:+19295039518">TEXT ME ↗</a>
+        <a class="btn outline" href="https://www.instagram.com/flickzbyoscar/" target="_blank" rel="noopener">
+          INSTAGRAM DM
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
 </main>
-<footer><div class="wrap footer"><div>© <span id="year"></span> FLICKZ BY OSCAR. ALL RIGHTS RESERVED.</div><div class="footer-links"><a href="#home">BACK TO TOP ↑</a><a href="https://www.instagram.com/flickzbyoscar/" target="_blank" rel="noopener">INSTAGRAM</a></div></div></footer>
-<script async src="https://www.instagram.com/embed.js"></script>
+
+<footer>
+  <div class="wrap footer">
+    <div>© <span id="year"></span> FLICKZ BY OSCAR. ALL RIGHTS RESERVED.</div>
+    <div class="footer-links">
+      <a href="#home">BACK TO TOP ↑</a>
+      <a href="https://www.instagram.com/flickzbyoscar/" target="_blank" rel="noopener">INSTAGRAM</a>
+    </div>
+  </div>
+</footer>
+
 <script>
 const PHONE = "+19295039518";
-const INSTAGRAM = "flickzbyoscar";
 
-// Add the Payhip product URLs after a parent/guardian has set up the seller account
-// and uploaded each preset file. Example: "https://payhip.com/b/XXXXXXXX"
-const PRESET_CHECKOUT_URLS = {
-  signature: "",
-  sports: ""
-};
+/* YEAR */
 document.getElementById("year").textContent = new Date().getFullYear();
-document.getElementById("smsLink").href = "sms:" + PHONE;
-document.getElementById("igLink").href = "https://www.instagram.com/" + INSTAGRAM + "/";
 
-document.querySelectorAll(".preset-buy").forEach(button=>{
- button.addEventListener("click", function(e){
-   const product = this.dataset.product;
-   const checkoutUrl = PRESET_CHECKOUT_URLS[product];
-   if (!checkoutUrl) {
-     e.preventDefault();
-     alert("Preset checkout is not connected yet. Add the product's secure checkout link in PRESET_CHECKOUT_URLS in index.html.");
-     return;
-   }
-   this.href = checkoutUrl;
-   this.target = "_blank";
-   this.rel = "noopener";
- });
+/* MOBILE MENU */
+const menuBtn = document.getElementById("menuBtn");
+const navlinks = document.getElementById("navlinks");
+
+menuBtn.addEventListener("click", () => {
+  navlinks.classList.toggle("open");
+  menuBtn.textContent = navlinks.classList.contains("open") ? "CLOSE" : "MENU";
 });
 
-document.getElementById("menuBtn").addEventListener("click",()=>document.getElementById("navlinks").classList.toggle("open"));
-document.querySelectorAll("#navlinks a").forEach(a=>a.addEventListener("click",()=>document.getElementById("navlinks").classList.remove("open")));
-document.getElementById("bookingForm").addEventListener("submit",function(e){
- e.preventDefault();
- const d = new FormData(this);
- const message = `Hi Flickz By Oscar! I'd like to request a booking.%0AName: ${encodeURIComponent(d.get("name"))}%0AContact: ${encodeURIComponent(d.get("contact"))}%0AShoot: ${encodeURIComponent(d.get("type"))}%0APreferred date: ${encodeURIComponent(d.get("date") || "Flexible")}%0ADetails: ${encodeURIComponent(d.get("details") || "Not provided")}`;
- document.getElementById("formNotice").textContent = "Your messaging app should open with the request. Review it and press Send.";
- window.location.href = "sms:" + PHONE + "?&body=" + message;
+document.querySelectorAll("#navlinks a").forEach(link => {
+  link.addEventListener("click", () => {
+    navlinks.classList.remove("open");
+    menuBtn.textContent = "MENU";
+  });
+});
+
+/* SCROLL REVEAL */
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("visible");
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
+
+/* CLICK GLOW AND RIPPLE */
+document.addEventListener("click", event => {
+  const target = event.target.closest("a, button, .card, .photo");
+  if (!target) return;
+
+  target.classList.remove("click-glow");
+  void target.offsetWidth;
+  target.classList.add("click-glow");
+
+  if (target.matches("a.btn, button.btn, button")) {
+    const rect = target.getBoundingClientRect();
+    const ripple = document.createElement("span");
+
+    ripple.className = "click-ripple";
+    ripple.style.left = (event.clientX - rect.left) + "px";
+    ripple.style.top = (event.clientY - rect.top) + "px";
+
+    target.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 700);
+  }
+});
+
+/* BOOKING AND TURNSTILE VERIFICATION */
+const bookingForm = document.getElementById("bookingForm");
+const formNotice = document.getElementById("formNotice");
+const bookingSubmit = document.getElementById("bookingSubmit");
+
+bookingForm.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const tokenField = bookingForm.querySelector(
+    '[name="cf-turnstile-response"]'
+  );
+
+  const token = tokenField ? tokenField.value : "";
+
+  if (!token) {
+    formNotice.textContent = "Please complete the bot verification first.";
+    return;
+  }
+
+  bookingSubmit.disabled = true;
+  bookingSubmit.textContent = "VERIFYING...";
+
+  try {
+    const response = await fetch("YOUR_CLOUDFLARE_WORKER_URL", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error("Verification failed");
+    }
+
+    const data = new FormData(bookingForm);
+
+    const message =
+      "Hi Flickz By Oscar! I'd like to request a booking." +
+      "\nName: " + data.get("name") +
+      "\nContact: " + data.get("contact") +
+      "\nShoot: " + data.get("type") +
+      "\nDate: " + (data.get("date") || "Flexible") +
+      "\nDetails: " + (data.get("details") || "Not provided");
+
+    formNotice.textContent =
+      "Verification successful! Your messaging app is opening.";
+
+    window.location.href =
+      "sms:" + PHONE + "?&body=" + encodeURIComponent(message);
+
+  } catch (error) {
+    formNotice.textContent =
+      "We couldn't verify your request. Please try the verification again.";
+    if (window.turnstile) window.turnstile.reset();
+  } finally {
+    bookingSubmit.disabled = false;
+    bookingSubmit.textContent = "SEND BOOKING REQUEST ↗";
+  }
 });
 </script>
-</body></html>
+
+</body>
+</html>
