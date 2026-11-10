@@ -1,34 +1,33 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#05080c">
-<meta name="description" content="Flickz By Oscar — sports, events, and creative photography.">
+<meta name="description" content="FLICKZ BY OSCAR — Sports, events, and creative photography.">
+<meta property="og:title" content="FLICKZ BY OSCAR">
+<meta property="og:description" content="Capturing the moments that matter.">
 <title>FLICKZ BY OSCAR | Photography</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <style>
 :root {
   --bg: #05080c;
-  --panel: #0c131c;
-  --panel2: #111c28;
-  --blue: #55cfff;
-  --blue2: #9be5ff;
-  --white: #f5faff;
-  --muted: #91a0ad;
-  --line: rgba(180,220,255,.15);
+  --panel: #0b111b;
+  --panel2: #101a29;
+  --blue: #168cff;
+  --blue2: #53b5ff;
+  --white: #f4f8ff;
+  --muted: #8b9bb0;
+  --line: rgba(255,255,255,.1);
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
   scroll-behavior: smooth;
@@ -38,736 +37,204 @@ html {
 body {
   background: var(--bg);
   color: var(--white);
-  font-family: Inter, Arial, sans-serif;
-  line-height: 1.6;
+  font-family: "DM Sans", sans-serif;
   overflow-x: hidden;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: -1;
-  background:
-    radial-gradient(circle at 15% 15%, rgba(85,207,255,.09), transparent 30%),
-    radial-gradient(circle at 90% 65%, rgba(85,207,255,.055), transparent 35%);
+a { color: inherit; text-decoration: none; }
+button, input, textarea, select { font: inherit; }
+button { cursor: pointer; }
+
+::selection {
+  background: var(--blue);
+  color: white;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button, input, select, textarea {
-  font: inherit;
-}
-
-.wrap {
-  width: min(1200px, 90%);
-  margin: auto;
-}
-
-/* LOADING CAMERA */
+/* =========================================
+   LOADING SCREEN — ORIGINAL ANIMATION
+   ========================================= */
 
 #camera-loader {
   position: fixed;
   inset: 0;
-  z-index: 99999;
-  background: #030405;
+  z-index: 9999;
+  background: #020407;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  animation: loaderFade 1s ease 2.2s forwards;
+  pointer-events: none;
+}
+
+.loader-content {
+  display: flex;
   flex-direction: column;
-  animation: loaderOut .8s ease 3.1s forwards;
+  align-items: center;
+  gap: 25px;
 }
 
 .camera {
-  width: 160px;
-  height: 108px;
-  background: #000;
-  border: 3px solid white;
-  border-radius: 17px;
+  width: 125px;
+  height: 75px;
+  background: #080b10;
+  border: 3px solid #202a38;
+  border-radius: 15px;
   position: relative;
-  animation: cameraFly 1.2s cubic-bezier(.2,.8,.2,1) forwards;
-  box-shadow: 0 0 45px rgba(255,255,255,.08);
+  box-shadow: 0 0 40px rgba(0,140,255,.25);
+  animation: cameraFly 1.5s cubic-bezier(.16,1,.3,1) forwards;
 }
 
-.camera-top {
-  position: absolute;
-  width: 48px;
-  height: 17px;
-  top: -19px;
-  left: 22px;
-  background: #000;
-  border: 3px solid white;
-  border-bottom: 0;
-  border-radius: 8px 8px 0 0;
-}
-
-.camera-button {
-  position: absolute;
-  width: 14px;
-  height: 7px;
-  left: 15px;
-  top: -9px;
-  background: #000;
-  border: 2px solid white;
-  border-radius: 4px;
-}
-
-.camera-flash {
-  position: absolute;
-  width: 20px;
-  height: 14px;
-  right: 13px;
-  top: 13px;
-  background: #000;
-  border: 2px solid white;
-  border-radius: 3px;
-}
-
-.camera-lens {
-  position: absolute;
-  width: 67px;
-  height: 67px;
-  top: 17px;
-  left: 44px;
-  background: #000;
-  border: 4px solid white;
-  border-radius: 50%;
-}
-
-.camera-lens::before {
+.camera::before {
   content: "";
   position: absolute;
-  inset: 8px;
-  border: 3px solid white;
-  border-radius: 50%;
+  top: -13px;
+  left: 24px;
+  width: 35px;
+  height: 12px;
+  background: #202a38;
+  border-radius: 6px 6px 0 0;
 }
 
-.camera-lens::after {
+.camera::after {
   content: "";
   position: absolute;
-  inset: 19px;
-  border: 2px solid white;
+  width: 38px;
+  height: 38px;
+  border: 5px solid #168cff;
   border-radius: 50%;
+  top: 16px;
+  left: 40px;
+  background: radial-gradient(circle, #142c46 0%, #05080c 70%);
+  box-shadow: 0 0 20px #168cff;
 }
 
 .loader-name {
-  margin-top: 45px;
-  font-size: 11px;
-  letter-spacing: 6px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(35px, 7vw, 65px);
+  font-weight: 900;
+  letter-spacing: 7px;
   opacity: 0;
-  animation: nameAppear .7s ease 1.5s forwards;
+  animation: nameAppear 1s ease 1s forwards;
 }
 
-.flash-light {
+.loader-name span { color: var(--blue); }
+
+.loader-flash {
   position: absolute;
   inset: 0;
   background: white;
   opacity: 0;
   pointer-events: none;
-  animation: cameraFlash .35s ease 2.25s;
+  animation: flash 0.5s ease 1.8s;
 }
 
 @keyframes cameraFly {
-  0% { transform: translateY(-550px) rotate(-25deg) scale(.5); }
-  70% { transform: translateY(15px) rotate(7deg) scale(1.1); }
-  100% { transform: translateY(0) rotate(0) scale(1); }
-}
-
-@keyframes cameraFlash {
-  0%,100% { opacity: 0; }
-  30% { opacity: 1; }
+  0% { transform: translateY(-180px) scale(.3) rotate(-20deg); opacity: 0; }
+  70% { transform: translateY(10px) scale(1.1) rotate(5deg); opacity: 1; }
+  100% { transform: translateY(0) scale(1) rotate(0); opacity: 1; }
 }
 
 @keyframes nameAppear {
-  to { opacity: 1; }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes loaderOut {
-  to { opacity: 0; visibility: hidden; pointer-events: none; }
+@keyframes flash {
+  0% { opacity: 0; }
+  30% { opacity: .9; }
+  100% { opacity: 0; }
 }
 
-/* NAVIGATION */
+@keyframes loaderFade {
+  to { opacity: 0; visibility: hidden; }
+}
 
-header {
-  position: sticky;
+/* =========================================
+   GENERAL
+   ========================================= */
+
+#scroll-progress {
+  position: fixed;
   top: 0;
-  z-index: 1000;
-  background: rgba(5,8,12,.82);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--line);
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #0877ed, #65c6ff);
+  z-index: 10001;
 }
 
-.nav {
-  min-height: 76px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+.container {
+  width: min(1180px, 90%);
+  margin: auto;
 }
 
-.brand {
-  font-weight: 900;
-  font-size: 18px;
-  letter-spacing: 2px;
-  white-space: nowrap;
-}
-
-.brand span {
-  color: var(--blue);
-}
-
-.navlinks {
-  display: flex;
-  gap: 23px;
-  align-items: center;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  font-weight: 700;
-}
-
-.navlinks a {
-  color: #c5d0da;
-  transition: .25s;
-}
-
-.navlinks a:hover {
-  color: var(--blue);
-  text-shadow: 0 0 15px rgba(85,207,255,.5);
-}
-
-.menu {
-  display: none;
-  color: white;
-  background: transparent;
-  border: 1px solid #425466;
-  padding: 9px 13px;
-  cursor: pointer;
-}
-
-/* HERO */
-
-.hero {
-  min-height: 740px;
-  display: flex;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  background:
-    radial-gradient(ellipse at 75% 40%, rgba(85,207,255,.18), transparent 32%),
-    radial-gradient(ellipse at 80% 90%, #12283b, transparent 50%),
-    linear-gradient(120deg, #030507, #0c1722 65%, #05080c);
-}
-
-.hero::before {
-  content: "";
-  position: absolute;
-  width: 550px;
-  height: 550px;
-  right: -100px;
-  top: 50px;
-  border: 1px solid rgba(85,207,255,.15);
-  border-radius: 50%;
-  box-shadow:
-    0 0 0 55px rgba(85,207,255,.025),
-    0 0 0 110px rgba(85,207,255,.02);
-  animation: orbit 20s linear infinite;
-}
-
-@keyframes orbit {
-  to { transform: rotate(360deg); }
-}
-
-.hero-inner {
-  position: relative;
-  z-index: 2;
+.section {
   padding: 110px 0;
-  animation: revealUp 1s ease both;
 }
 
-.eyebrow {
-  color: var(--blue);
-  font-size: 11px;
+.section-label {
+  color: var(--blue2);
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 4px;
   text-transform: uppercase;
+  margin-bottom: 14px;
 }
 
-.hero h1 {
-  font-family: "Barlow Condensed", Impact, sans-serif;
-  font-size: clamp(75px, 13vw, 155px);
-  line-height: .82;
-  letter-spacing: -3px;
-  margin: 28px 0;
+.section-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(42px, 7vw, 75px);
   font-weight: 900;
-}
-
-.hero h1 span {
-  display: block;
-  color: transparent;
-  -webkit-text-stroke: 2px var(--blue);
-  filter: drop-shadow(0 0 20px rgba(85,207,255,.15));
-}
-
-.hero p {
-  max-width: 470px;
-  color: #aebdca;
-  font-size: 15px;
-  line-height: 1.9;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 13px;
-  margin-top: 30px;
-}
-
-.btn {
-  position: relative;
-  overflow: hidden;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  padding: 14px 23px;
-  border: 1px solid var(--blue);
-  background: var(--blue);
-  color: #03101a;
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 1.5px;
-  cursor: pointer;
-  transition: .3s;
-}
-
-.btn:hover {
-  background: white;
-  border-color: white;
-  box-shadow: 0 0 30px rgba(85,207,255,.35);
-  transform: translateY(-4px);
-}
-
-.btn.outline {
-  color: white;
-  background: transparent;
-  border-color: #506779;
-}
-
-.btn.outline:hover {
-  color: var(--blue);
-  border-color: var(--blue);
-  background: rgba(85,207,255,.06);
-}
-
-.hero-label {
-  position: absolute;
-  right: 5%;
-  bottom: 35px;
-  color: #8294a4;
-  font-size: 10px;
-  letter-spacing: 3px;
-}
-
-/* MARQUEE */
-
-.marquee {
-  padding: 19px 0;
-  overflow: hidden;
-  white-space: nowrap;
-  background: rgba(85,207,255,.045);
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  color: var(--blue);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 4px;
-}
-
-.marquee-inner {
-  display: inline-block;
-  animation: marquee 27s linear infinite;
-}
-
-@keyframes marquee {
-  to { transform: translateX(-50%); }
-}
-
-/* SECTIONS */
-
-section {
-  padding: 100px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.section-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 25px;
-  margin-bottom: 40px;
-}
-
-.kicker {
-  display: inline-block;
-  color: var(--blue);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--blue);
-}
-
-.section-top h2,
-.about-copy h2,
-.booking-copy h2 {
-  font-family: "Barlow Condensed", Impact, sans-serif;
-  font-size: clamp(45px, 7vw, 76px);
   line-height: .95;
-  letter-spacing: -1px;
-  margin-top: 15px;
   text-transform: uppercase;
-}
-
-.section-top p {
-  max-width: 390px;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-/* GALLERY */
-
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-.photo {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  aspect-ratio: 4 / 5;
-  background: #101923;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.photo img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  transition: transform .7s, filter .5s;
-}
-
-.photo:hover img {
-  transform: scale(1.09);
-  filter: brightness(.72) saturate(1.2);
-}
-
-.photo::after {
-  content: "";
-  position: absolute;
-  inset: 35% 0 0;
-  background: linear-gradient(transparent, rgba(0,0,0,.85));
-  pointer-events: none;
-}
-
-.photo-label {
-  position: absolute;
-  z-index: 2;
-  bottom: 18px;
-  left: 18px;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 2px;
-}
-
-.photo:nth-child(3n + 2) {
-  transform: translateY(22px);
-}
-
-/* ABOUT */
-
-.about {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 55px;
-}
-
-.about-art {
-  min-height: 430px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  background:
-    radial-gradient(circle at center, #233c50, #101a24 65%, #06090d);
-}
-
-.about-art::before {
-  content: "F/O";
-  font-family: "Barlow Condensed", Impact, sans-serif;
-  font-size: clamp(140px, 20vw, 220px);
-  font-weight: 900;
-  color: transparent;
-  -webkit-text-stroke: 2px var(--blue);
-  text-shadow: 0 0 55px rgba(85,207,255,.15);
-}
-
-.about-art::after {
-  content: "BEHIND THE LENS";
-  position: absolute;
-  left: 25px;
-  bottom: 25px;
-  color: var(--blue);
-  font-size: 10px;
-  letter-spacing: 4px;
-}
-
-.about-copy h2 {
-  margin-bottom: 22px;
-}
-
-.about-copy p {
-  color: var(--muted);
-  font-size: 14px;
-  margin-bottom: 16px;
-}
-
-/* SERVICES */
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-}
-
-.card {
-  padding: 30px;
-  background: linear-gradient(145deg, #121e2a, #090e14);
-  border: 1px solid var(--line);
-  transition: .35s;
-}
-
-.card:hover {
-  transform: translateY(-8px);
-  border-color: var(--blue);
-  box-shadow: 0 18px 45px rgba(85,207,255,.09);
-}
-
-.card-number {
-  color: var(--blue);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 3px;
-}
-
-.card h3 {
-  font-size: 22px;
-  margin: 22px 0 12px;
-}
-
-.card p {
-  color: var(--muted);
-  font-size: 13px;
-  min-height: 65px;
-}
-
-.price {
-  color: var(--blue);
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  margin-top: 22px;
-}
-
-/* BOOKING */
-
-.booking {
-  display: grid;
-  grid-template-columns: .8fr 1.2fr;
-  gap: 50px;
-}
-
-.booking-copy h2 {
   margin-bottom: 20px;
 }
 
-.booking-copy p {
+.section-title span { color: var(--blue); }
+
+.section-description {
   color: var(--muted);
-  font-size: 14px;
-  margin-bottom: 15px;
+  max-width: 620px;
+  line-height: 1.8;
 }
 
-.form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.field.full {
-  grid-column: 1 / -1;
-}
-
-.field label {
-  color: #aab9c7;
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-.field input,
-.field select,
-.field textarea {
-  width: 100%;
-  padding: 14px;
-  color: white;
-  background: #0c131c;
-  border: 1px solid #293b4c;
-  outline: none;
-  border-radius: 3px;
-  transition: .25s;
-}
-
-.field input:focus,
-.field select:focus,
-.field textarea:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 15px rgba(85,207,255,.09);
-}
-
-.field textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.notice {
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 10px;
-}
-
-.turnstile-wrap {
-  margin: 8px 0;
-  min-height: 65px;
-}
-
-/* SHOP */
-
-.shop-note {
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 20px;
-}
-
-/* INSTAGRAM */
-
-.instagram-box {
-  padding: 45px;
-  border: 1px solid var(--line);
-  background:
-    radial-gradient(circle at 85% 20%, rgba(85,207,255,.12), transparent 35%),
-    #0b121b;
-}
-
-/* CONTACT */
-
-.contact-box {
-  padding: 45px;
-  display: flex;
-  justify-content: space-between;
+.btn {
+  display: inline-flex;
   align-items: center;
-  gap: 25px;
-  border: 1px solid rgba(85,207,255,.25);
-  background:
-    radial-gradient(ellipse at 90% 20%, rgba(85,207,255,.15), transparent 40%),
-    #0b121b;
-}
-
-.contact-box h3 {
-  font-family: "Barlow Condensed", Impact, sans-serif;
-  font-size: clamp(35px, 6vw, 60px);
-  line-height: .95;
-  margin: 14px 0;
-  text-transform: uppercase;
-}
-
-.contact-box p {
-  color: var(--muted);
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 24px;
+  border-radius: 6px;
+  font-weight: 800;
   font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  transition: .3s ease;
 }
 
-/* FOOTER */
-
-footer {
-  padding: 35px 0;
-  color: #81909e;
-  font-size: 11px;
+.btn-primary {
+  background: var(--blue);
+  color: white;
+  box-shadow: 0 8px 30px rgba(22,140,255,.2);
 }
 
-.footer {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 20px;
+.btn-primary:hover {
+  background: #0874df;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(22,140,255,.4);
 }
 
-.footer-links {
-  display: flex;
-  gap: 20px;
+.btn-outline {
+  border-color: rgba(255,255,255,.25);
+  color: white;
 }
 
-.footer-links a:hover {
-  color: var(--blue);
+.btn-outline:hover {
+  border-color: var(--blue);
+  background: rgba(22,140,255,.1);
+  transform: translateY(-3px);
 }
-
-/* CLICK EFFECTS */
-
-.click-ripple {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: rgba(85,207,255,.6);
-  pointer-events: none;
-  transform: translate(-50%,-50%) scale(0);
-  animation: rippleOut .65s ease-out forwards;
-  z-index: 10;
-}
-
-@keyframes rippleOut {
-  to {
-    transform: translate(-50%,-50%) scale(17);
-    opacity: 0;
-  }
-}
-
-.click-glow {
-  animation: bluePulse .45s ease;
-}
-
-@keyframes bluePulse {
-  0% { box-shadow: 0 0 0 rgba(85,207,255,0); }
-  50% { box-shadow: 0 0 35px rgba(85,207,255,.5); }
-  100% { box-shadow: 0 0 0 rgba(85,207,255,0); }
-}
-
-/* SCROLL REVEAL */
 
 .reveal {
   opacity: 0;
@@ -780,426 +247,1190 @@ footer {
   transform: translateY(0);
 }
 
-@keyframes revealUp {
-  from { opacity: 0; transform: translateY(25px); }
-  to { opacity: 1; transform: translateY(0); }
+/* =========================================
+   NAVIGATION
+   ========================================= */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(5,8,12,.88);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line);
 }
 
-/* MOBILE */
-
-@media(max-width: 900px) {
-  .navlinks { gap: 12px; font-size: 9px; }
+.nav {
+  height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-@media(max-width: 760px) {
-  .nav { min-height: 68px; }
-  .menu { display: block; }
+.logo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 29px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
 
-  .navlinks {
-    display: none;
+.logo span { color: var(--blue); }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.nav-links a {
+  color: #b8c5d6;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: .25s;
+}
+
+.nav-links a:hover { color: var(--blue2); }
+
+.nav-cta {
+  padding: 11px 17px;
+  border-radius: 4px;
+  background: var(--blue);
+  color: white !important;
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  color: white;
+  border: 0;
+  font-size: 28px;
+}
+
+/* =========================================
+   HERO
+   ========================================= */
+
+.hero {
+  min-height: 88vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 75% 45%, rgba(0,100,220,.18), transparent 45%),
+    linear-gradient(120deg, #05080c 35%, #081323 100%);
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border: 1px solid rgba(22,140,255,.12);
+  border-radius: 50%;
+  right: -130px;
+  top: 10%;
+  box-shadow: 0 0 0 50px rgba(22,140,255,.025),
+              0 0 0 100px rgba(22,140,255,.02);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 90px 0;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 13px;
+  border: 1px solid rgba(22,140,255,.35);
+  border-radius: 30px;
+  color: var(--blue2);
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 800;
+  margin-bottom: 28px;
+}
+
+.hero-tag::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  background: var(--blue);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--blue);
+}
+
+.hero h1 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(65px, 12vw, 135px);
+  line-height: .78;
+  font-weight: 900;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  max-width: 950px;
+}
+
+.hero h1 span {
+  color: var(--blue);
+  display: block;
+  margin-top: 17px;
+  text-shadow: 0 0 40px rgba(22,140,255,.2);
+}
+
+.hero-description {
+  max-width: 510px;
+  color: #9cacc0;
+  line-height: 1.8;
+  margin: 30px 0;
+}
+
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+}
+
+.hero-bottom {
+  display: flex;
+  gap: 45px;
+  margin-top: 65px;
+  flex-wrap: wrap;
+}
+
+.hero-stat strong {
+  display: block;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 34px;
+  color: white;
+}
+
+.hero-stat small {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* =========================================
+   MARQUEE
+   ========================================= */
+
+.marquee {
+  overflow: hidden;
+  background: var(--blue);
+  padding: 16px 0;
+  transform: rotate(-1deg) scale(1.02);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeMove 25s linear infinite;
+}
+
+.marquee-track span {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 3px;
+  padding: 0 25px;
+  color: white;
+  white-space: nowrap;
+}
+
+@keyframes marqueeMove {
+  to { transform: translateX(-50%); }
+}
+
+/* =========================================
+   GALLERY
+   ========================================= */
+
+.gallery-section { background: #070b12; }
+
+.gallery-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 25px;
+  margin-bottom: 35px;
+  flex-wrap: wrap;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 30px;
+}
+
+.filter-btn {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: #aab8ca;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: .25s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background: var(--blue);
+  color: white;
+  border-color: var(--blue);
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 17px;
+}
+
+.photo-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--panel);
+  border-radius: 7px;
+  cursor: pointer;
+  min-height: 260px;
+  aspect-ratio: 4 / 3;
+}
+
+.photo-card.hidden { display: none; }
+
+.photo-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .7s cubic-bezier(.2,.8,.2,1), filter .4s;
+}
+
+.photo-card:hover img {
+  transform: scale(1.09);
+  filter: brightness(.65);
+}
+
+.photo-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  padding: 22px;
+  background: linear-gradient(transparent 35%, rgba(0,0,0,.85));
+  opacity: .9;
+  transition: .3s;
+}
+
+.photo-card:hover .photo-overlay { opacity: 1; }
+
+.photo-overlay small {
+  color: var(--blue2);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.photo-overlay h3 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 27px;
+  text-transform: uppercase;
+}
+
+.photo-overlay .view-label {
+  font-size: 10px;
+  color: #d4e6ff;
+  letter-spacing: 1px;
+  margin-top: 5px;
+}
+
+/* =========================================
+   LIGHTBOX
+   ========================================= */
+
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10010;
+  background: rgba(0,0,0,.96);
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+  max-width: min(1100px, 85vw);
+  max-height: 82vh;
+  object-fit: contain;
+  border-radius: 5px;
+  box-shadow: 0 0 60px rgba(0,0,0,.5);
+}
+
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+  position: absolute;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  color: white;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  font-size: 25px;
+  transition: .2s;
+}
+
+.lightbox-close:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover {
+  background: var(--blue);
+}
+
+.lightbox-close { top: 25px; right: 25px; }
+.lightbox-prev { left: 25px; }
+.lightbox-next { right: 25px; }
+
+.lightbox-caption {
+  position: absolute;
+  bottom: 20px;
+  color: white;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* =========================================
+   ABOUT
+   ========================================= */
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 70px;
+  align-items: center;
+}
+
+.about-visual {
+  min-height: 420px;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(140deg, rgba(22,140,255,.3), transparent 55%),
+    linear-gradient(35deg, #101d30, #05080c);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-camera {
+  font-size: 120px;
+  filter: drop-shadow(0 0 35px rgba(22,140,255,.35));
+}
+
+.about-visual::after {
+  content: "FLICKZ BY OSCAR";
+  position: absolute;
+  bottom: 25px;
+  left: 25px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 900;
+  font-size: 25px;
+  letter-spacing: 4px;
+  color: rgba(255,255,255,.6);
+}
+
+.about-copy p {
+  color: var(--muted);
+  line-height: 1.9;
+  margin-bottom: 20px;
+}
+
+.about-points {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+  margin-top: 28px;
+}
+
+.about-point {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 16px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.about-point span { color: var(--blue2); margin-right: 8px; }
+
+/* =========================================
+   SERVICES
+   ========================================= */
+
+.services-section { background: #070b12; }
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 17px;
+  margin-top: 40px;
+}
+
+.service-card {
+  background: linear-gradient(145deg, #101b2a, #080d15);
+  border: 1px solid var(--line);
+  padding: 30px;
+  border-radius: 7px;
+  transition: .3s;
+}
+
+.service-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(22,140,255,.6);
+  box-shadow: 0 15px 40px rgba(0,0,0,.25);
+}
+
+.service-icon {
+  font-size: 30px;
+  margin-bottom: 22px;
+}
+
+.service-card h3 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 27px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.service-card p {
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 13px;
+}
+
+/* =========================================
+   BOOKING
+   ========================================= */
+
+.booking-section {
+  background:
+    radial-gradient(ellipse at 90% 50%, rgba(0,100,220,.14), transparent 50%),
+    #05080c;
+}
+
+.booking-grid {
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  gap: 65px;
+  align-items: start;
+}
+
+.booking-info p {
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 25px;
+}
+
+.booking-detail {
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  color: #c1d0e1;
+  margin: 18px 0;
+  font-size: 13px;
+}
+
+.booking-detail span { color: var(--blue2); font-size: 20px; }
+
+.booking-form {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 30px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.form-group { margin-bottom: 17px; }
+
+.form-group label {
+  display: block;
+  color: #b8c6d8;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 9px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 14px;
+  background: #070c14;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 4px;
+  color: white;
+  outline: none;
+  transition: .2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(22,140,255,.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 115px;
+}
+
+.form-group select option { background: #080d15; }
+
+.turnstile-wrap { margin: 20px 0; }
+
+.form-message {
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 13px;
+  color: var(--blue2);
+}
+
+/* =========================================
+   SUPPORT
+   ========================================= */
+
+.support-section { background: #080e18; }
+
+.support-panel {
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(22,140,255,.2), transparent 55%),
+    linear-gradient(135deg, #101d30, #080d15);
+  border: 1px solid rgba(22,140,255,.25);
+  border-radius: 10px;
+  padding: 45px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.support-panel p {
+  color: var(--muted);
+  line-height: 1.8;
+  margin-top: 15px;
+}
+
+.support-options {
+  display: grid;
+  gap: 13px;
+}
+
+.support-option {
+  background: rgba(0,0,0,.25);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 20px;
+}
+
+.support-option h3 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 25px;
+  margin-bottom: 8px;
+}
+
+.support-option p {
+  font-size: 12px;
+  margin: 0 0 13px;
+}
+
+.support-note {
+  color: #7e8da0;
+  font-size: 11px;
+  line-height: 1.7;
+  margin-top: 20px;
+}
+
+/* =========================================
+   INSTAGRAM / CONTACT
+   ========================================= */
+
+.instagram-section { text-align: center; }
+
+.instagram-card {
+  margin-top: 30px;
+  padding: 35px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: linear-gradient(130deg, #101b2a, #080d15);
+}
+
+.instagram-card .ig-icon {
+  font-size: 42px;
+  margin-bottom: 12px;
+}
+
+.instagram-card h3 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 35px;
+  text-transform: uppercase;
+}
+
+.instagram-card p {
+  color: var(--muted);
+  margin: 10px 0 22px;
+}
+
+.contact-section {
+  background: #070b12;
+  text-align: center;
+}
+
+.contact-section p {
+  color: var(--muted);
+  margin: 15px auto 25px;
+  line-height: 1.8;
+  max-width: 550px;
+}
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+footer {
+  padding: 30px 0;
+  border-top: 1px solid var(--line);
+  background: #030507;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-copy {
+  color: #6e7c8e;
+  font-size: 11px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px;
+  color: #9aa9bb;
+  font-size: 11px;
+}
+
+.footer-links a:hover { color: var(--blue2); }
+
+.back-top {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 500;
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  border: 1px solid rgba(22,140,255,.5);
+  background: #0b1b2c;
+  color: white;
+  font-size: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: .3s;
+}
+
+.back-top.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 850px) {
+  .nav-links {
     position: absolute;
-    top: 68px;
+    top: 78px;
     left: 0;
-    right: 0;
+    width: 100%;
     padding: 25px 5%;
-    background: #080e15;
+    background: #070c14;
     border-bottom: 1px solid var(--line);
+    display: none;
     flex-direction: column;
-    align-items: flex-start;
-    font-size: 12px;
+    align-items: stretch;
+    gap: 22px;
   }
 
-  .navlinks.open { display: flex; }
+  .nav-links.open { display: flex; }
 
-  .hero { min-height: 640px; }
-  .hero h1 { font-size: clamp(70px, 16vw, 110px); }
+  .nav-links a { font-size: 14px; }
+  .menu-toggle { display: block; }
 
-  .section-top { display: block; }
-  .section-top p { margin-top: 15px; }
-
-  .about, .booking {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-
-  .cards { grid-template-columns: 1fr 1fr; }
-
-  .contact-box {
-    display: block;
-    padding: 28px;
-  }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .about-grid, .booking-grid { grid-template-columns: 1fr; gap: 35px; }
+  .services-grid { grid-template-columns: repeat(2, 1fr); }
+  .support-panel { grid-template-columns: 1fr; }
 }
 
-@media(max-width: 520px) {
-  section { padding: 75px 0; }
-  .gallery, .cards { grid-template-columns: 1fr; }
-  .photo:nth-child(3n + 2) { transform: none; }
-  .form { grid-template-columns: 1fr; }
-  .field.full { grid-column: auto; }
-  .hero-label { display: none; }
-  .instagram-box { padding: 25px; }
-}
-
-@media(prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: .01ms !important;
-  }
+@media (max-width: 560px) {
+  .section { padding: 75px 0; }
+  .hero { min-height: 80vh; }
+  .hero h1 { font-size: 70px; }
+  .hero-bottom { gap: 25px; }
+  .gallery-grid { grid-template-columns: 1fr; }
+  .photo-card { aspect-ratio: 5 / 4; }
+  .services-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .booking-form { padding: 20px; }
+  .support-panel { padding: 25px; }
+  .about-visual { min-height: 300px; }
+  .lightbox img { max-width: 95vw; }
+  .lightbox-prev { left: 8px; }
+  .lightbox-next { right: 8px; }
+  .footer-content { flex-direction: column; text-align: center; }
 }
 </style>
-
-<!-- Cloudflare Turnstile script -->
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 
 <body>
 
+<div id="scroll-progress"></div>
+
+<!-- ORIGINAL CAMERA LOADING SCREEN -->
 <div id="camera-loader">
-  <div class="camera">
-    <div class="camera-top"></div>
-    <div class="camera-button"></div>
-    <div class="camera-flash"></div>
-    <div class="camera-lens"></div>
+  <div class="loader-content">
+    <div class="camera"></div>
+    <div class="loader-name">FLICKZ <span>BY OSCAR</span></div>
   </div>
-  <div class="loader-name">FLICKZ BY OSCAR</div>
-  <div class="flash-light"></div>
+  <div class="loader-flash"></div>
 </div>
 
+<!-- NAVIGATION -->
 <header>
-  <div class="wrap nav">
-    <a class="brand" href="#home">FLICKZ <span>BY OSCAR.</span></a>
+  <div class="container nav">
+    <a href="#home" class="logo">FLICKZ <span>BY OSCAR</span></a>
 
-    <nav class="navlinks" id="navlinks">
-      <a href="#portfolio">PORTFOLIO</a>
-      <a href="#about">ABOUT</a>
-      <a href="#services">SERVICES</a>
-      <a href="#booking">BOOK</a>
-      <a href="#instagram">INSTAGRAM</a>
-      <a href="#shop">SHOP</a>
-      <a href="#contact">CONTACT</a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="#home">Home</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#booking">Book</a>
+      <a href="#support">Support</a>
+      <a href="#contact" class="nav-cta">Contact</a>
     </nav>
-
-    <button class="menu" id="menuBtn" type="button">MENU</button>
   </div>
 </header>
 
 <main>
 
+<!-- HERO -->
 <section class="hero" id="home">
-  <div class="wrap hero-inner">
-    <div class="eyebrow">SPORTS / EVENTS / CREATIVE PHOTOGRAPHY</div>
+  <div class="container hero-content">
+    <div class="hero-tag">SPORTS • EVENTS • CREATIVE PHOTOGRAPHY</div>
 
-    <h1>CAPTURE <span>THE MOMENT.</span></h1>
+    <h1>
+      EVERY MOMENT.
+      <span>CAPTURED.</span>
+    </h1>
 
-    <p>
-      Every moment has a story. Every frame has a feeling.
-      Welcome to Flickz By Oscar — where the action never stops.
+    <p class="hero-description">
+      More than just pictures. Capturing the energy, emotion, and unforgettable moments behind every game and event.
     </p>
 
-    <div class="actions">
-      <a class="btn" href="#booking">BOOK A SHOOT ↗</a>
-      <a class="btn outline" href="#portfolio">EXPLORE THE WORK</a>
+    <div class="hero-buttons">
+      <a href="#gallery" class="btn btn-primary">Explore the Gallery ↗</a>
+      <a href="#booking" class="btn btn-outline">Book a Shoot</a>
+    </div>
+
+    <div class="hero-bottom">
+      <div class="hero-stat">
+        <strong>01</strong>
+        <small>Every frame matters</small>
+      </div>
+      <div class="hero-stat">
+        <strong>100%</strong>
+        <small>Passion behind the lens</small>
+      </div>
+      <div class="hero-stat">
+        <strong>NY</strong>
+        <small>Based in New York</small>
+      </div>
     </div>
   </div>
-
-  <div class="hero-label">FLICKZ BY OSCAR · PHOTOGRAPHY</div>
 </section>
 
+<!-- MOVING STRIP -->
 <div class="marquee">
-  <div class="marquee-inner">
-    FLICKZ BY OSCAR ✦ CAPTURE THE MOMENT ✦ SPORTS PHOTOGRAPHY ✦ EVENTS ✦
-    CREATIVE PHOTOGRAPHY ✦ FLICKZ BY OSCAR ✦ CAPTURE THE MOMENT ✦
-    SPORTS PHOTOGRAPHY ✦ EVENTS ✦
+  <div class="marquee-track">
+    <span>FLICKZ BY OSCAR ✦ SPORTS PHOTOGRAPHY ✦ EVERY MOMENT MATTERS ✦</span>
+    <span>FLICKZ BY OSCAR ✦ SPORTS PHOTOGRAPHY ✦ EVERY MOMENT MATTERS ✦</span>
+    <span>FLICKZ BY OSCAR ✦ SPORTS PHOTOGRAPHY ✦ EVERY MOMENT MATTERS ✦</span>
   </div>
 </div>
 
-<section id="portfolio">
-  <div class="wrap">
-    <div class="section-top reveal">
+<!-- GALLERY -->
+<section class="section gallery-section" id="gallery">
+  <div class="container">
+    <div class="gallery-heading reveal">
       <div>
-        <div class="kicker">01 / SELECTED WORK</div>
-        <h2>The Portfolio.</h2>
+        <div class="section-label">THE PORTFOLIO</div>
+        <h2 class="section-title">THE <span>GALLERY.</span></h2>
+        <p class="section-description">Every photo tells a story. Explore the moments captured through the lens.</p>
       </div>
-      <p>Real moments. Real action. A collection of work captured through the lens of Flickz By Oscar.</p>
+      <a href="#booking" class="btn btn-outline">Book Your Session ↗</a>
     </div>
 
-    <div class="gallery">
-      <a class="photo reveal" href="photo-01.webp" target="_blank">
-        <img src="photo-01.webp" alt="Sports photograph 1" loading="lazy">
-        <div class="photo-label">01 / GAME TIME</div>
-      </a>
-      <a class="photo reveal" href="photo-02.webp" target="_blank">
-        <img src="photo-02.webp" alt="Sports photograph 2" loading="lazy">
-        <div class="photo-label">02 / THE ACTION</div>
-      </a>
-      <a class="photo reveal" href="photo-03.webp" target="_blank">
-        <img src="photo-03.webp" alt="Sports photograph 3" loading="lazy">
-        <div class="photo-label">03 / IN MOTION</div>
-      </a>
-      <a class="photo reveal" href="photo-04.webp" target="_blank">
-        <img src="photo-04.webp" alt="Sports photograph 4" loading="lazy">
-        <div class="photo-label">04 / THE MOMENT</div>
-      </a>
-      <a class="photo reveal" href="photo-05.webp" target="_blank">
-        <img src="photo-05.webp" alt="Sports photograph 5" loading="lazy">
-        <div class="photo-label">05 / GAME DAY</div>
-      </a>
-      <a class="photo reveal" href="photo-06.webp" target="_blank">
-        <img src="photo-06.webp" alt="Sports photograph 6" loading="lazy">
-        <div class="photo-label">06 / FOCUS</div>
-      </a>
-      <a class="photo reveal" href="photo-07.webp" target="_blank">
-        <img src="photo-07.webp" alt="Sports photograph 7" loading="lazy">
-        <div class="photo-label">07 / DETAILS</div>
-      </a>
-      <a class="photo reveal" href="photo-08.webp" target="_blank">
-        <img src="photo-08.webp" alt="Sports photograph 8" loading="lazy">
-        <div class="photo-label">08 / ENERGY</div>
-      </a>
-      <a class="photo reveal" href="photo-09.webp" target="_blank">
-        <img src="photo-09.webp" alt="Sports photograph 9" loading="lazy">
-        <div class="photo-label">09 / EXPERIENCE</div>
-      </a>
-      <a class="photo reveal" href="photo-10.webp" target="_blank">
-        <img src="photo-10.webp" alt="Sports photograph 10" loading="lazy">
-        <div class="photo-label">10 / FLICKZ</div>
-      </a>
+    <div class="filters reveal">
+      <button class="filter-btn active" data-filter="all">All Photos</button>
+      <button class="filter-btn" data-filter="basketball">Basketball</button>
+      <button class="filter-btn" data-filter="football">Football</button>
+      <button class="filter-btn" data-filter="soccer">Soccer</button>
+      <button class="filter-btn" data-filter="baseball">Baseball</button>
+      <button class="filter-btn" data-filter="other">Other</button>
+    </div>
+
+    <div class="gallery-grid" id="galleryGrid">
+
+      <div class="photo-card reveal" data-category="basketball" data-title="Basketball">
+        <img src="photo-01.webp" alt="Basketball photography" loading="lazy">
+        <div class="photo-overlay"><small>Basketball</small><h3>GAME TIME</h3><span class="view-label">VIEW PHOTO ↗</span></div>
+      </div>
+
+      <div class="photo-card reveal" data-category="football" data-title="Football">
+        <img src="photo-02.webp" alt="Football photography" loading="lazy">
+        <div class="photo-overlay"><small>Football</small><h3>THE GRIND</h3><span class="view-label">VIEW PHOTO ↗</span></div>
+      </div>
+
+      <div class="photo-card reveal" data-category="soccer" data-title="Soccer">
+        <img src="photo-03.webp" alt="Soccer photography" loading="lazy">
+        <div class="photo-overlay"><small>Soccer</small><h3>THE MOMENT</h3><span class="view-label">VIEW PHOTO ↗</span></div>
+      </div>
+
+      <div class="photo-card reveal" data-category="basketball" data-title="Basketball">
+        <img src="photo-04.webp" alt="Basketball action photography" loading="lazy">
+        <div class="photo-overlay"><small>Basketball</small><h3>IN ACTION</h3><span class="view-label">VIEW PHOTO ↗</span></div>
+      </div>
+
+      <div class="photo-card reveal" data-category="baseball" data-title="Baseball">
+        <img src="photo-05.webp" alt="Baseball photography" loading="lazy">
+        <div class="photo-overlay"><small>Baseball</small><h3>ON THE FIELD</h3><span class="view-label">VIEW PHOTO ↗</span></div>
+      </div>
+
+      <div class="photo-card reveal" data-category="football" data-title="Football">
+        <img src="photo-06.webp" alt="Football action photography" loading="lazy">
+        <div class="photo-overlay"><small>Football</small><h3>ALL IN</h3><span class="view-label">VIEW PHOTO ↗</span></div>
+      </div>
+
+      <div class="photo-card reveal" data-category="soccer" data-title="Soccer">
+        <img src="photo-07.webp" alt="Soccer match photography" loading="lazy">
+        <div class="photo-overlay"><small>Soccer</small><h3>THE PLAY</h3><span class="view-label">VIEW PHOTO ↗</span></div>
+      </div>
+
+      <div class="photo-card reveal" data-category="other" data-title="Creative">
+        <img src="photo-08.webp" alt="Creative photography" loading="lazy">
+        <div class="photo-overlay"><small>Creative</small><h3>BEHIND THE LENS</h3><span class="view-label">VIEW PHOTO ↗</span></div>
+      </div>
+
+      <div class="photo-card reveal" data-category="basketball" data-title="Basketball">
+        <img src="photo-09.webp" alt="Basketball game photography" loading="lazy">
+        <div class="photo-overlay"><small>Basketball</small><h3>NO LIMITS</h3><span class="view-label">VIEW PHOTO ↗</span></div>
+      </div>
+
+      <div class="photo-card reveal" data-category="other" data-title="Events">
+        <img src="photo-10.webp" alt="Event photography" loading="lazy">
+        <div class="photo-overlay"><small>Events</small><h3>THE EXPERIENCE</h3><span class="view-label">VIEW PHOTO ↗</span></div>
+      </div>
+
     </div>
   </div>
 </section>
 
-<section id="about">
-  <div class="wrap about">
-    <div class="about-art reveal"></div>
+<!-- FULLSCREEN PHOTO VIEWER -->
+<div class="lightbox" id="lightbox" aria-modal="true" role="dialog" aria-label="Photo viewer">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">×</button>
+  <button class="lightbox-prev" id="lightboxPrev" aria-label="Previous photo">‹</button>
+  <img id="lightboxImage" src="" alt="Expanded portfolio photo">
+  <button class="lightbox-next" id="lightboxNext" aria-label="Next photo">›</button>
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="container about-grid">
+    <div class="about-visual reveal">
+      <div class="about-camera">📷</div>
+    </div>
 
     <div class="about-copy reveal">
-      <div class="kicker">02 / BEHIND THE CAMERA</div>
-      <h2>Not just pictures. Memories.</h2>
+      <div class="section-label">BEHIND THE CAMERA</div>
+      <h2 class="section-title">MORE THAN<br><span>A PHOTO.</span></h2>
+
       <p>
-        I'm Oscar, the photographer behind Flickz By Oscar.
-        I focus on capturing the action, atmosphere, and details
-        that make every moment worth remembering.
+        FLICKZ BY OSCAR is built around capturing the moments people remember. From the intensity of competition to the atmosphere around an event, every frame is an opportunity to tell a story.
       </p>
+
       <p>
-        From game day to special events, the goal is to create
-        photos that bring you right back to the moment.
+        The goal is simple: create images that bring the energy of the moment back every time you look at them.
       </p>
-      <a class="btn outline" href="#contact">GET IN TOUCH ↗</a>
+
+      <div class="about-points">
+        <div class="about-point"><span>✦</span> Sports photography</div>
+        <div class="about-point"><span>✦</span> Creative perspective</div>
+        <div class="about-point"><span>✦</span> Event coverage</div>
+        <div class="about-point"><span>✦</span> Attention to detail</div>
+      </div>
     </div>
   </div>
 </section>
 
-<section id="services">
-  <div class="wrap">
-    <div class="section-top reveal">
-      <div>
-        <div class="kicker">03 / WHAT I DO</div>
-        <h2>Services.</h2>
-      </div>
-      <p>Different moments. Different stories. Let's capture yours.</p>
+<!-- SERVICES -->
+<section class="section services-section" id="services">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">WHAT I DO</div>
+      <h2 class="section-title">MADE TO <span>CAPTURE.</span></h2>
+      <p class="section-description">Photography for the moments worth remembering.</p>
     </div>
 
-    <div class="cards">
-      <div class="card reveal">
-        <div class="card-number">01 / SPORTS</div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon">🏀</div>
         <h3>Sports Photography</h3>
-        <p>Game action, player portraits, team pictures, and highlight galleries.</p>
-        <div class="price">REQUEST A QUOTE ↗</div>
+        <p>Game-day action, player moments, team photos, and the energy that makes sports unforgettable.</p>
       </div>
 
-      <div class="card reveal">
-        <div class="card-number">02 / EVENTS</div>
-        <h3>Events & Parties</h3>
-        <p>Birthdays, celebrations, and the moments that bring everyone together.</p>
-        <div class="price">REQUEST A QUOTE ↗</div>
+      <div class="service-card reveal">
+        <div class="service-icon">🎟️</div>
+        <h3>Event Photography</h3>
+        <p>Capturing the atmosphere, people, and details that make an event special.</p>
       </div>
 
-      <div class="card reveal">
-        <div class="card-number">03 / CREATIVE</div>
-        <h3>Creative Photography</h3>
-        <p>Portraits, food photography, and creative projects made to stand out.</p>
-        <div class="price">REQUEST A QUOTE ↗</div>
+      <div class="service-card reveal">
+        <div class="service-icon">📸</div>
+        <h3>Creative Shoots</h3>
+        <p>Personal shoots and creative photography with a unique visual style.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section id="booking">
-  <div class="wrap booking">
-    <div class="booking-copy reveal">
-      <div class="kicker">04 / LET'S WORK TOGETHER</div>
-      <h2>Make it a moment.</h2>
-      <p>Interested in booking a shoot? Fill out the form and send your request.</p>
-      <p>Your booking is not confirmed until availability and pricing are agreed upon.</p>
+<!-- BOOKING -->
+<section class="section booking-section" id="booking">
+  <div class="container booking-grid">
+    <div class="booking-info reveal">
+      <div class="section-label">LET'S WORK</div>
+      <h2 class="section-title">BOOK A <span>SHOOT.</span></h2>
+      <p>
+        Have a game, event, or creative project coming up? Send a request with the details and I'll be able to follow up.
+      </p>
+
+      <div class="booking-detail"><span>✉</span> Contact through the booking form</div>
+      <div class="booking-detail"><span>◎</span> Instagram: @flickzbyoscar</div>
+      <div class="booking-detail"><span>☎</span> 929-503-9518</div>
     </div>
 
-    <form class="form reveal" id="bookingForm">
-      <div class="field">
-        <label for="name">Your name</label>
-        <input id="name" name="name" required placeholder="Full name">
-      </div>
+    <form class="booking-form reveal" id="bookingForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="customerName">Your Name</label>
+          <input id="customerName" name="name" type="text" placeholder="Your name" required maxlength="80">
+        </div>
 
-      <div class="field">
-        <label for="contactMethod">Email or Instagram</label>
-        <input id="contactMethod" name="contact" required placeholder="How can I reach you?">
-      </div>
-
-      <div class="field">
-        <label for="type">Type of shoot</label>
-        <select id="type" name="type" required>
-          <option value="">Choose one</option>
-          <option>Sports Photography</option>
-          <option>Team Photos</option>
-          <option>Party / Event</option>
-          <option>Food Photography</option>
-          <option>Portraits</option>
-          <option>Other</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="date">Preferred date</label>
-        <input id="date" name="date" type="date">
-      </div>
-
-      <div class="field full">
-        <label for="details">Shoot details</label>
-        <textarea id="details" name="details" placeholder="Tell me about the shoot, location, and what you need..."></textarea>
-      </div>
-
-      <div class="field full">
-        <label>Bot verification</label>
-        <div class="turnstile-wrap">
-          <!-- Replace with your real Cloudflare Turnstile site key -->
-          <div class="cf-turnstile"
-               data-sitekey="YOUR_TURNSTILE_SITE_KEY"
-               data-theme="dark"></div>
+        <div class="form-group">
+          <label for="customerPhone">Phone Number</label>
+          <input id="customerPhone" name="phone" type="tel" placeholder="Your phone number" required maxlength="25">
         </div>
       </div>
 
-      <div class="field full">
-        <button class="btn" type="submit" id="bookingSubmit">SEND BOOKING REQUEST ↗</button>
-        <div class="notice" id="formNotice" aria-live="polite">
-          Complete the bot verification before sending your request.
+      <div class="form-row">
+        <div class="form-group">
+          <label for="shootType">Type of Shoot</label>
+          <select id="shootType" name="type" required>
+            <option value="">Select a service</option>
+            <option>Basketball</option>
+            <option>Football</option>
+            <option>Soccer</option>
+            <option>Baseball</option>
+            <option>Other Sports</option>
+            <option>Event Photography</option>
+            <option>Creative Shoot</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="shootDate">Preferred Date</label>
+          <input id="shootDate" name="date" type="date">
         </div>
       </div>
+
+      <div class="form-group">
+        <label for="shootLocation">Location</label>
+        <input id="shootLocation" name="location" type="text" placeholder="Where is the event?" maxlength="120">
+      </div>
+
+      <div class="form-group">
+        <label for="shootDetails">Tell Me About It</label>
+        <textarea id="shootDetails" name="details" placeholder="Share the details of your shoot..." maxlength="1000"></textarea>
+      </div>
+
+      <div class="turnstile-wrap">
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAAF7rI6_hEPfyC1lT"></div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%">Send Booking Request ↗</button>
+      <p class="form-message" id="formMessage" aria-live="polite"></p>
     </form>
   </div>
 </section>
 
-<section id="instagram">
-  <div class="wrap">
-    <div class="instagram-box reveal">
-      <div class="kicker">05 / FOLLOW THE JOURNEY</div>
-      <h2 class="section-top h2">Instagram.</h2>
-      <p style="color:var(--muted);margin-top:15px">
-        More photos, more moments, and behind-the-scenes content.
-      </p>
-      <div class="actions">
-        <a class="btn" href="https://www.instagram.com/flickzbyoscar/" target="_blank" rel="noopener">
-          FOLLOW @FLICKZBYOSCAR ↗
-        </a>
+<!-- SUPPORT -->
+<section class="section support-section" id="support">
+  <div class="container">
+    <div class="support-panel reveal">
+      <div>
+        <div class="section-label">SUPPORT THE WORK</div>
+        <h2 class="section-title">HELP KEEP<br><span>CREATING.</span></h2>
+        <p>
+          Enjoy the photography? You can support the work and help make future shoots and creative projects possible. Support is completely optional.
+        </p>
+        <p class="support-note">
+          Support payments are voluntary and are not charitable donations or tax-deductible contributions.
+        </p>
+      </div>
+
+      <div class="support-options">
+        <div class="support-option">
+          <h3>Cash App</h3>
+          <p>Support through Cash App.</p>
+          <a class="btn btn-primary" href="https://cash.app/$OscarLin2" target="_blank" rel="noopener noreferrer">Open Cash App ↗</a>
+        </div>
+
+        <div class="support-option">
+          <h3>Apple Pay</h3>
+          <p>Use this phone number to find the intended recipient in Apple Pay.</p>
+          <button class="btn btn-outline" id="copyPaymentNumber" type="button">Copy 929-503-9518</button>
+          <p class="form-message" id="copyMessage" aria-live="polite"></p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="shop">
-  <div class="wrap">
-    <div class="section-top reveal">
-      <div>
-        <div class="kicker">06 / DIGITAL PRODUCTS</div>
-        <h2>The Shop.</h2>
-      </div>
-      <p>Editing looks and photography products from Flickz By Oscar.</p>
+<!-- INSTAGRAM -->
+<section class="section instagram-section" id="instagram">
+  <div class="container reveal">
+    <div class="section-label">FOLLOW THE JOURNEY</div>
+    <h2 class="section-title">FOLLOW ON <span>INSTAGRAM.</span></h2>
+
+    <div class="instagram-card">
+      <div class="ig-icon">◎</div>
+      <h3>@FLICKZBYOSCAR</h3>
+      <p>See more photography, updates, and behind-the-scenes moments.</p>
+      <a class="btn btn-primary" href="https://www.instagram.com/flickzbyoscar/" target="_blank" rel="noopener noreferrer">Visit Instagram ↗</a>
     </div>
-
-    <div class="cards">
-      <div class="card reveal">
-        <div class="card-number">01 / PRESETS</div>
-        <h3>Signature Presets</h3>
-        <p>Editing looks inspired by the Flickz By Oscar style.</p>
-        <div class="price">$20 USD</div>
-        <div class="notice">Checkout link coming soon.</div>
-      </div>
-
-      <div class="card reveal">
-        <div class="card-number">02 / SPORTS</div>
-        <h3>Sports Presets</h3>
-        <p>Editing looks made for action and sports photography.</p>
-        <div class="price">$50 USD</div>
-        <div class="notice">Checkout link coming soon.</div>
-      </div>
-
-      <div class="card reveal">
-        <div class="card-number">03 / PRINTS</div>
-        <h3>Photo Prints</h3>
-        <p>Ask about getting your favorite photos printed.</p>
-        <a class="btn outline" href="#contact">ASK ABOUT PRINTS</a>
-      </div>
-    </div>
-
-    <p class="shop-note">Prices are displayed in USD. Checkout links will be added when the products are ready.</p>
   </div>
 </section>
 
-<section id="contact">
-  <div class="wrap">
-    <div class="contact-box reveal">
-      <div>
-        <div class="kicker">07 / GET CONNECTED</div>
-        <h3>Have a moment worth capturing?</h3>
-        <p>Let's make something memorable.</p>
-      </div>
-
-      <div class="actions">
-        <a class="btn" href="sms:+19295039518">TEXT ME ↗</a>
-        <a class="btn outline" href="https://www.instagram.com/flickzbyoscar/" target="_blank" rel="noopener">
-          INSTAGRAM DM
-        </a>
-      </div>
-    </div>
+<!-- CONTACT -->
+<section class="section contact-section" id="contact">
+  <div class="container reveal">
+    <div class="section-label">HAVE A PROJECT?</div>
+    <h2 class="section-title">LET'S MAKE<br><span>IT HAPPEN.</span></h2>
+    <p>
+      Have a question or want to talk about a shoot? Reach out and let's make something worth remembering.
+    </p>
+    <a class="btn btn-primary" href="sms:+19295039518">Send a Text ↗</a>
+    <a class="btn btn-outline" href="https://www.instagram.com/flickzbyoscar/" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
   </div>
 </section>
 
 </main>
 
+<!-- FOOTER -->
 <footer>
-  <div class="wrap footer">
-    <div>© <span id="year"></span> FLICKZ BY OSCAR. ALL RIGHTS RESERVED.</div>
+  <div class="container footer-content">
+    <a href="#home" class="logo">FLICKZ <span>BY OSCAR</span></a>
+    <div class="footer-copy">© <span id="year"></span> FLICKZ BY OSCAR. ALL RIGHTS RESERVED.</div>
     <div class="footer-links">
-      <a href="#home">BACK TO TOP ↑</a>
-      <a href="https://www.instagram.com/flickzbyoscar/" target="_blank" rel="noopener">INSTAGRAM</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#booking">Booking</a>
+      <a href="#contact">Contact</a>
     </div>
   </div>
 </footer>
 
+<button class="back-top" id="backTop" aria-label="Back to top">↑</button>
+
 <script>
-const PHONE = "+19295039518";
+/* =========================================
+   CONFIGURATION
+   ========================================= */
 
-/* YEAR */
-document.getElementById("year").textContent = new Date().getFullYear();
+// Replace this with your actual deployed Cloudflare Worker URL.
+// Do not put a Stripe secret key or other private key in this file.
+const WORKER_URL = "YOUR_CLOUDFLARE_WORKER_URL";
 
-/* MOBILE MENU */
-const menuBtn = document.getElementById("menuBtn");
-const navlinks = document.getElementById("navlinks");
+const CONTACT_NUMBER = "+19295039518";
 
-menuBtn.addEventListener("click", () => {
-  navlinks.classList.toggle("open");
-  menuBtn.textContent = navlinks.classList.contains("open") ? "CLOSE" : "MENU";
+/* =========================================
+   MOBILE NAVIGATION
+   ========================================= */
+
+const menuToggle = document.getElementById("menuToggle");
+const navLinks = document.getElementById("navLinks");
+
+menuToggle.addEventListener("click", () => {
+  const isOpen = navLinks.classList.toggle("open");
+  menuToggle.setAttribute("aria-expanded", String(isOpen));
+  menuToggle.textContent = isOpen ? "×" : "☰";
 });
 
-document.querySelectorAll("#navlinks a").forEach(link => {
+navLinks.querySelectorAll("a").forEach(link => {
   link.addEventListener("click", () => {
-    navlinks.classList.remove("open");
-    menuBtn.textContent = "MENU";
+    navLinks.classList.remove("open");
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.textContent = "☰";
   });
 });
 
-/* SCROLL REVEAL */
-const revealObserver = new IntersectionObserver(entries => {
+/* =========================================
+   SCROLL ANIMATIONS
+   ========================================= */
+
+const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add("visible");
@@ -1208,90 +1439,232 @@ const revealObserver = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.12 });
 
-document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
-
-/* CLICK GLOW AND RIPPLE */
-document.addEventListener("click", event => {
-  const target = event.target.closest("a, button, .card, .photo");
-  if (!target) return;
-
-  target.classList.remove("click-glow");
-  void target.offsetWidth;
-  target.classList.add("click-glow");
-
-  if (target.matches("a.btn, button.btn, button")) {
-    const rect = target.getBoundingClientRect();
-    const ripple = document.createElement("span");
-
-    ripple.className = "click-ripple";
-    ripple.style.left = (event.clientX - rect.left) + "px";
-    ripple.style.top = (event.clientY - rect.top) + "px";
-
-    target.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 700);
-  }
+document.querySelectorAll(".reveal").forEach(element => {
+  revealObserver.observe(element);
 });
 
-/* BOOKING AND TURNSTILE VERIFICATION */
+/* =========================================
+   SCROLL PROGRESS + BACK TO TOP
+   ========================================= */
+
+const progressBar = document.getElementById("scroll-progress");
+const backTop = document.getElementById("backTop");
+
+window.addEventListener("scroll", () => {
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+
+  progressBar.style.width = progress + "%";
+  backTop.classList.toggle("show", window.scrollY > 500);
+});
+
+backTop.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+/* =========================================
+   GALLERY FILTERS
+   ========================================= */
+
+const filterButtons = document.querySelectorAll(".filter-btn");
+const photoCards = [...document.querySelectorAll(".photo-card")];
+
+filterButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    filterButtons.forEach(item => item.classList.remove("active"));
+    button.classList.add("active");
+
+    const filter = button.dataset.filter;
+
+    photoCards.forEach(card => {
+      const matches = filter === "all" || card.dataset.category === filter;
+      card.classList.toggle("hidden", !matches);
+    });
+  });
+});
+
+/* =========================================
+   FULLSCREEN GALLERY
+   ========================================= */
+
+const lightbox = document.getElementById("lightbox");
+const lightboxImage = document.getElementById("lightboxImage");
+const lightboxCaption = document.getElementById("lightboxCaption");
+
+const lightboxClose = document.getElementById("lightboxClose");
+const lightboxPrev = document.getElementById("lightboxPrev");
+const lightboxNext = document.getElementById("lightboxNext");
+
+let currentPhotoIndex = 0;
+let visiblePhotos = [];
+
+function getVisiblePhotos() {
+  return photoCards.filter(card => !card.classList.contains("hidden"));
+}
+
+function showPhoto(index) {
+  visiblePhotos = getVisiblePhotos();
+
+  if (!visiblePhotos.length) return;
+
+  currentPhotoIndex = (index + visiblePhotos.length) % visiblePhotos.length;
+
+  const card = visiblePhotos[currentPhotoIndex];
+  const img = card.querySelector("img");
+
+  lightboxImage.src = img.src;
+  lightboxImage.alt = img.alt;
+  lightboxCaption.textContent = card.dataset.title || "FLICKZ BY OSCAR";
+}
+
+function openLightbox(index) {
+  visiblePhotos = getVisiblePhotos();
+  showPhoto(index);
+  lightbox.classList.add("open");
+  document.body.style.overflow = "hidden";
+  lightboxClose.focus();
+}
+
+function closeLightbox() {
+  lightbox.classList.remove("open");
+  document.body.style.overflow = "";
+  lightboxImage.src = "";
+}
+
+photoCards.forEach(card => {
+  card.addEventListener("click", () => {
+    const visibleIndex = getVisiblePhotos().indexOf(card);
+    openLightbox(visibleIndex);
+  });
+});
+
+lightboxClose.addEventListener("click", closeLightbox);
+
+lightboxPrev.addEventListener("click", () => {
+  showPhoto(currentPhotoIndex - 1);
+});
+
+lightboxNext.addEventListener("click", () => {
+  showPhoto(currentPhotoIndex + 1);
+});
+
+lightbox.addEventListener("click", event => {
+  if (event.target === lightbox) closeLightbox();
+});
+
+document.addEventListener("keydown", event => {
+  if (!lightbox.classList.contains("open")) return;
+
+  if (event.key === "Escape") closeLightbox();
+  if (event.key === "ArrowLeft") showPhoto(currentPhotoIndex - 1);
+  if (event.key === "ArrowRight") showPhoto(currentPhotoIndex + 1);
+});
+
+/* =========================================
+   BOOKING FORM
+   ========================================= */
+
 const bookingForm = document.getElementById("bookingForm");
-const formNotice = document.getElementById("formNotice");
-const bookingSubmit = document.getElementById("bookingSubmit");
+const formMessage = document.getElementById("formMessage");
 
 bookingForm.addEventListener("submit", async event => {
   event.preventDefault();
 
-  const tokenField = bookingForm.querySelector(
-    '[name="cf-turnstile-response"]'
-  );
+  const formData = new FormData(bookingForm);
 
-  const token = tokenField ? tokenField.value : "";
+  const booking = {
+    name: formData.get("name").trim(),
+    phone: formData.get("phone").trim(),
+    type: formData.get("type"),
+    date: formData.get("date"),
+    location: formData.get("location").trim(),
+    details: formData.get("details").trim(),
+    turnstileToken: bookingForm.querySelector(
+      '[name="cf-turnstile-response"]'
+    )?.value || ""
+  };
 
-  if (!token) {
-    formNotice.textContent = "Please complete the bot verification first.";
+  if (!booking.name || !booking.phone || !booking.type) {
+    formMessage.textContent = "Please fill in your name, phone number, and shoot type.";
     return;
   }
 
-  bookingSubmit.disabled = true;
-  bookingSubmit.textContent = "VERIFYING...";
+  if (WORKER_URL === "YOUR_CLOUDFLARE_WORKER_URL") {
+    formMessage.textContent =
+      "The booking system needs your Cloudflare Worker URL before it can send requests. You can contact me directly by text instead.";
+
+    const smsText = [
+      "FLICKZ BY OSCAR BOOKING REQUEST",
+      "Name: " + booking.name,
+      "Phone: " + booking.phone,
+      "Shoot: " + booking.type,
+      "Date: " + (booking.date || "Not specified"),
+      "Location: " + (booking.location || "Not specified"),
+      "Details: " + (booking.details || "Not specified")
+    ].join("\n");
+
+    const smsLink = "sms:" + CONTACT_NUMBER + "?&body=" + encodeURIComponent(smsText);
+    window.location.href = smsLink;
+    return;
+  }
+
+  if (!booking.turnstileToken) {
+    formMessage.textContent = "Please complete the security check.";
+    return;
+  }
+
+  const submitButton = bookingForm.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
+  submitButton.textContent = "SENDING...";
 
   try {
-    const response = await fetch("YOUR_CLOUDFLARE_WORKER_URL", {
+    const response = await fetch(WORKER_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token })
+      body: JSON.stringify(booking)
     });
 
-    const result = await response.json();
-
-    if (!response.ok || !result.success) {
-      throw new Error("Verification failed");
+    if (!response.ok) {
+      throw new Error("The booking request could not be sent.");
     }
 
-    const data = new FormData(bookingForm);
+    formMessage.textContent = "Your booking request was sent successfully!";
+    bookingForm.reset();
 
-    const message =
-      "Hi Flickz By Oscar! I'd like to request a booking." +
-      "\nName: " + data.get("name") +
-      "\nContact: " + data.get("contact") +
-      "\nShoot: " + data.get("type") +
-      "\nDate: " + (data.get("date") || "Flexible") +
-      "\nDetails: " + (data.get("details") || "Not provided");
-
-    formNotice.textContent =
-      "Verification successful! Your messaging app is opening.";
-
-    window.location.href =
-      "sms:" + PHONE + "?&body=" + encodeURIComponent(message);
+    if (window.turnstile) {
+      window.turnstile.reset();
+    }
 
   } catch (error) {
-    formNotice.textContent =
-      "We couldn't verify your request. Please try the verification again.";
-    if (window.turnstile) window.turnstile.reset();
+    formMessage.textContent =
+      "Something went wrong. Please try sending your request by text instead.";
   } finally {
-    bookingSubmit.disabled = false;
-    bookingSubmit.textContent = "SEND BOOKING REQUEST ↗";
+    submitButton.disabled = false;
+    submitButton.textContent = "Send Booking Request ↗";
   }
 });
+
+/* =========================================
+   COPY APPLE PAY NUMBER
+   ========================================= */
+
+const copyButton = document.getElementById("copyPaymentNumber");
+const copyMessage = document.getElementById("copyMessage");
+
+copyButton.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText("929-503-9518");
+    copyMessage.textContent = "Phone number copied!";
+  } catch (error) {
+    copyMessage.textContent = "Copy unavailable. Number: 929-503-9518";
+  }
+});
+
+/* =========================================
+   FOOTER YEAR
+   ========================================= */
+
+document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 
 </body>
