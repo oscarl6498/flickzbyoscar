@@ -22,6 +22,7 @@ create index if not exists flickz_gallery_rate_limits_ip_time_idx
 alter table public.flickz_gallery_rate_limits enable row level security;
 revoke all on public.flickz_gallery_rate_limits from public, anon, authenticated;
 grant all on public.flickz_gallery_rate_limits to service_role;
+grant usage, select on sequence public.flickz_gallery_rate_limits_id_seq to service_role;
 
 -- Existing admin policies on the gallery tables must remain owner-scoped.
 alter table public.flickz_albums enable row level security;
