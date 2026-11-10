@@ -117,7 +117,7 @@ Deno.serve(async req => {
       if (photoError) throw photoError;
       const photoMap = new Map((photos || []).map(photo => [photo.id, photo]));
       const result = await Promise.all((selections || []).map(async selection => {
-        const selected = (selection.photo_ids || []).map((id: string) => photoMap.get(id)).filter(Boolean);
+        const selected = (selection.photo_ids || []).map((id: string) => photoMap.get(id)).filter((photo: any) => photo && photo.album_id === selection.album_id);
         const files = await Promise.all(selected.map(async photo => {
           const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(photo.storage_path, 1800, { download: photo.file_name });
           if (error) throw error;
