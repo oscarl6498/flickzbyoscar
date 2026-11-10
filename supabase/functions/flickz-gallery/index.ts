@@ -1,9 +1,11 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const secretKeys = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}");
+const SUPABASE_ADMIN_KEY = secretKeys.default || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+if (!SUPABASE_ADMIN_KEY) throw new Error("Supabase server-side secret key is not configured.");
 const BUCKET = "flickz-gallery";
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+const supabase = createClient(SUPABASE_URL, SUPABASE_ADMIN_KEY, {
   auth: { persistSession: false, autoRefreshToken: false }
 });
 
@@ -77,7 +79,9 @@ Deno.serve(async req => {
       const authorization = req.headers.get("Authorization") || "";
       const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
       if (!token) return json({ error: "Sign in required." }, 401);
-      const publicKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+      const publishableKeys = JSON.parse(Deno.env.get("SUPABASE_PUBLISHABLE_KEYS") || "{}");
+      const publicKey = publishableKeys.default || Deno.env.get("SUPABASE_ANON_KEY") || "";
+      if (!publicKey) return json({ error: "Supabase publishable key is not configured." }, 500);
       const authClient = createClient(SUPABASE_URL, publicKey, { global: { headers: { Authorization: "Bearer " + token } }, auth: { persistSession: false } });
       const { data: userData, error: authError } = await authClient.auth.getUser(token);
       if (authError || !userData.user) return json({ error: "Sign in required." }, 401);
