@@ -1,13 +1,15 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const SECRET_KEYS = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") ?? "{}") as Record<string, string>;
+const SUPABASE_SECRET_KEY = SECRET_KEYS.default;
+if (!SUPABASE_SECRET_KEY) throw new Error("Supabase default secret key is not available to this function.");
 const BUCKET = "flickz-gallery";
 const WINDOW_MINUTES = 15;
 const MAX_REQUESTS_PER_WINDOW = 20;
 const SIGNED_URL_SECONDS = 60 * 60;
 
-const db = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
+const db = createClient(SUPABASE_URL, SUPABASE_SECRET_KEY, {
   auth: { persistSession: false, autoRefreshToken: false }
 });
 
@@ -34,7 +36,7 @@ async function enforceRateLimit(req: Request): Promise<boolean> {
     || req.headers.get("x-real-ip")
     || req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
     || "unknown";
-  const ipHash = await sha256(`${SUPABASE_URL}|${ip}`);
+  const ipHash = await sha256(`${SUPABASE_SECRET_KEY}|${ip}`);
   const cutoff = new Date(Date.now() - WINDOW_MINUTES * 60_000).toISOString();
 
   const { count, error: countError } = await db
