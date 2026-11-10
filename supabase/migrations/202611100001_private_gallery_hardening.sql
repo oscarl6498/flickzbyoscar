@@ -28,6 +28,7 @@ grant usage, select on sequence public.flickz_gallery_rate_limits_id_seq to serv
 alter table public.flickz_albums enable row level security;
 alter table public.flickz_photos enable row level security;
 alter table public.flickz_selections enable row level security;
+alter table public.flickz_selections add column if not exists instagram_approved boolean not null default false;
 
 drop policy if exists "Admins manage own albums" on public.flickz_albums;
 create policy "Admins manage own albums"
@@ -58,6 +59,26 @@ using (
   exists (
     select 1 from public.flickz_albums a
     where a.id = album_id and a.owner_id = auth.uid()
+  )
+);
+
+drop policy if exists "Admins update selections for own albums" on public.flickz_selections;
+create policy "Admins update selections for own albums"
+on public.flickz_selections for update to authenticated
+using (
+  exists (
+    select 1 from public.flickz_albums a
+    where a.id = album_id and a.owner_id = auth.uid()
+  )
+)
+with check (
+  instagram_approved = false
+  or (
+    instagram_consent = true
+    and exists (
+      select 1 from public.flickz_albums a
+      where a.id = album_id and a.owner_id = auth.uid()
+    )
   )
 );
 
@@ -107,7 +128,7 @@ revoke all on function public.flickz_submit_selection(text, uuid[], boolean) fro
 grant usage on schema public to authenticated;
 grant select, insert, update, delete on public.flickz_albums to authenticated;
 grant select, insert, update, delete on public.flickz_photos to authenticated;
-grant select on public.flickz_selections to authenticated;
+grant select, update on public.flickz_selections to authenticated;
 
 commit;
 
