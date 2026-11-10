@@ -72,14 +72,11 @@ using (
   )
 )
 with check (
-  instagram_approved = false
-  or (
-    instagram_consent = true
-    and exists (
-      select 1 from public.flickz_albums a
-      where a.id = album_id and a.owner_id = auth.uid()
-    )
+  exists (
+    select 1 from public.flickz_albums a
+    where a.id = album_id and a.owner_id = auth.uid()
   )
+  and (instagram_approved = false or instagram_consent = true)
 );
 
 -- Private Storage policies: an authenticated album owner can upload, preview, and delete
