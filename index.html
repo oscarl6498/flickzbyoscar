@@ -474,6 +474,10 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
 .admin-album-row{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
 .admin-album-row small{display:block;color:var(--muted);margin-top:5px}
 .admin-submission{border-bottom:1px solid var(--line)}
+.admin-submission-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.admin-download-photo{margin:4px 6px 0 0;padding:8px 10px;font-size:10px}
+.approval-label{font-size:11px;color:var(--green);font-weight:800;letter-spacing:1px}
+
 .portal-hidden{display:none!important}
 @media(max-width:700px){.portal-grid,.portal-admin-grid{grid-template-columns:1fr}.client-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
@@ -1322,8 +1326,8 @@ async function refreshAdmin() {
   const {data:albums,error} = await sb.from("flickz_albums").select("id,title,description,access_code,is_active,created_at").order("created_at",{ascending:false});
   if (error) { setAdminStatus("Could not load albums. Please check the SQL migration."); return; }
   activeAdminAlbums=albums || []; renderAdminAlbums();
-  const {data:submissions,error:subError} = await sb.from("flickz_selections").select("id,album_id,photo_ids,instagram_consent,created_at").order("created_at",{ascending:false}).limit(100);
-  if (subError) { document.getElementById("adminSubmissions").textContent="Could not load selections."; return; }
+  const {data:submissions,error:subError} = await sb.from("flickz_selections").select("id,album_id,photo_ids,instagram_consent,instagram_approved,created_at").order("created_at",{ascending:false}).limit(100);
+  if (subError) { document.getElementById("adminSubmissions").textContent="Could not load selections. Run the latest SQL migration."; return; }
   const albumIds=[...new Set((submissions||[]).map(s=>s.album_id))];
   let photoRows=[];
   if (albumIds.length) {
@@ -1338,11 +1342,44 @@ async function refreshAdmin() {
     const thumbParts=[];
     for (const photo of selected) {
       const {data:signed,error:signedError}=await sb.storage.from(GALLERY_BUCKET).createSignedUrl(photo.storage_path,1800);
-      if (!signedError && signed?.signedUrl) thumbParts.push('<a href="'+escapeGalleryHTML(signed.signedUrl)+'" target="_blank" rel="noopener"><img src="'+escapeGalleryHTML(signed.signedUrl)+'" alt="Selected photo" style="width:105px;height:78px;object-fit:cover;border-radius:4px;margin:8px 6px 0 0"></a>');
+      if (!signedError && signed?.signedUrl) {
+        thumbParts.push('<a href="'+escapeGalleryHTML(signed.signedUrl)+'" target="_blank" rel="noopener"><img src="'+escapeGalleryHTML(signed.signedUrl)+'" alt="Selected photo" style="width:105px;height:78px;object-fit:cover;border-radius:4px;margin:8px 6px 0 0"></a>');
+        thumbParts.push('<button class="btn btn-outline admin-download-photo" type="button" data-path="'+escapeGalleryHTML(photo.storage_path)+'" data-filename="'+escapeGalleryHTML(photo.file_name)+'">DOWNLOAD '+escapeGalleryHTML(photo.file_name)+'</button>');
+      }
     }
-    blocks.push('<div class="admin-submission"><strong>'+escapeGalleryHTML(album?.title||"Album")+'</strong><br>'+selected.length+' selected photo(s) · Instagram permission: <b>'+(sub.instagram_consent?"YES":"NO")+'</b><br><small>'+new Date(sub.created_at).toLocaleString()+'</small><div>'+thumbParts.join("")+'</div><p class="portal-note">Instagram posting is manual. Review the guardian permission before featuring any minor.</p></div>');
+    const approvalButton = sub.instagram_consent
+      ? '<button class="btn '+(sub.instagram_approved?'btn-outline':'btn-primary')+' instagram-approval" type="button" data-submission-id="'+escapeGalleryHTML(sub.id)+'" data-approved="'+String(Boolean(sub.instagram_approved))+'">'+(sub.instagram_approved?'REVOKE INSTAGRAM APPROVAL':'APPROVE FOR INSTAGRAM')+'</button>'
+      : '<span class="portal-note">Instagram permission not granted — approval unavailable.</span>';
+    blocks.push('<div class="admin-submission"><strong>'+escapeGalleryHTML(album?.title||"Album")+'</strong><br>'+selected.length+' selected photo(s) · Instagram permission: <b>'+(sub.instagram_consent?"YES":"NO")+'</b><br>Instagram status: <span class="approval-label">'+(sub.instagram_approved?"APPROVED":"NOT APPROVED")+'</span><br><small>'+new Date(sub.created_at).toLocaleString()+'</small><div>'+thumbParts.join("")+'</div><div class="admin-submission-actions">'+approvalButton+'</div><p class="portal-note">Instagram posting is manual. Approval is recorded here; review the guardian permission before featuring any minor.</p></div>');
   }
   document.getElementById("adminSubmissions").innerHTML=blocks.join("") || '<p class="portal-note">No client selections submitted yet.</p>';
+
+  document.querySelectorAll(".instagram-approval").forEach(button=>button.addEventListener("click",async()=>{
+    const approved=button.dataset.approved!=="true";
+    button.disabled=true;
+    const {error}=await sb.from("flickz_selections").update({instagram_approved:approved}).eq("id",button.dataset.submissionId);
+    if(error){setAdminStatus("Approval could not be saved. Check that you ran the latest SQL migration.");button.disabled=false;return;}
+    setAdminStatus(approved?"Selection approved for Instagram use.":"Instagram approval revoked.");
+    await refreshAdmin();
+  }));
+  document.querySelectorAll(".admin-download-photo").forEach(button=>button.addEventListener("click",async()=>{
+    const originalLabel=button.textContent; button.disabled=true; button.textContent="PREPARING...";
+    try {
+      const {data:signed,error}=await sb.storage.from(GALLERY_BUCKET).createSignedUrl(button.dataset.path,1800,{download:button.dataset.filename});
+      if(error||!signed?.signedUrl) throw new Error("Download link could not be created.");
+      const response=await fetch(signed.signedUrl);
+      if(!response.ok) throw new Error("Photo download failed.");
+      const blob=await response.blob();
+      const objectUrl=URL.createObjectURL(blob);
+      const link=document.createElement("a"); link.href=objectUrl; link.download=button.dataset.filename || "flickz-photo.jpg";
+      document.body.appendChild(link); link.click(); link.remove();
+      setTimeout(()=>URL.revokeObjectURL(objectUrl),30000);
+      button.textContent="DOWNLOADED";
+    } catch(error) {
+      setAdminStatus(error.message || "Photo download failed.");
+      button.textContent=originalLabel; button.disabled=false;
+    }
+  }));
 }
 adminLoginForm?.addEventListener("submit",async event=>{
   event.preventDefault();
