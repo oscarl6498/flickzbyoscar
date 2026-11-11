@@ -550,21 +550,23 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
     <div class="gallery-heading reveal">
       <div>
         <div class="section-label">THE PORTFOLIO</div>
-        <h2 class="section-title">FOOTBALL <span>GALAXY.</span></h2>
-        <p class="section-description">Every angle. Every play. Every moment. Explore the FLICKZ BY OSCAR football collection.</p>
+        <h2 class="section-title">SPORTS <span>GALLERY.</span></h2>
+        <p class="section-description">Every angle. Every play. Every moment. Explore football and basketball collections from FLICKZ BY OSCAR.</p>
       </div>
       <a href="#booking" class="btn btn-outline">Book a Shoot ↗</a>
     </div>
 
     <div class="galaxy-banner reveal">
-      <h3>WELCOME TO THE FOOTBALL GALAXY</h3>
-      <p>All 10 of your current portfolio photos are gathered here. Select any image to view it in full screen.</p>
+      <h3>WELCOME TO THE FLICKZ GALLERY</h3>
+      <p>Browse football and basketball event albums. Select any image to view it in full screen.</p>
     </div>
 
     <div class="filters reveal">
       <button class="filter-btn active" data-filter="all">All Photos</button>
-      <button class="filter-btn" data-filter="football">Football Galaxy</button>
+      <button class="filter-btn" data-filter="football">Football</button>
+      <button class="filter-btn" data-filter="basketball">Basketball</button>
     </div>
+    <p id="publicGalleryStatus" class="portal-note" aria-live="polite">Loading public event albums...</p>
 
     <div class="gallery-grid" id="galleryGrid">
       <div class="photo-card reveal" data-category="football" data-title="Football — The Grind">
@@ -1031,7 +1033,7 @@ backTop.addEventListener("click", () => {
    GALLERY FILTERS
    ========================================= */
 const filterButtons = document.querySelectorAll(".filter-btn");
-const photoCards = [...document.querySelectorAll(".photo-card")];
+let photoCards = [...document.querySelectorAll(".photo-card")];
 
 filterButtons.forEach(button => {
   button.addEventListener("click", () => {
@@ -1090,9 +1092,22 @@ function closeLightbox() {
   lightboxImage.src = "";
 }
 
-photoCards.forEach(card => {
+function bindPortfolioPhotoCard(card) {
+  if (card.dataset.lightboxBound === "true") return;
+  card.dataset.lightboxBound = "true";
   card.addEventListener("click", () => openLightbox(getVisiblePhotos().indexOf(card)));
-});
+}
+
+photoCards.forEach(bindPortfolioPhotoCard);
+
+window.refreshPortfolioGallery = function() {
+  photoCards = [...document.querySelectorAll(".photo-card")];
+  photoCards.forEach(bindPortfolioPhotoCard);
+  const activeFilter = document.querySelector(".filter-btn.active")?.dataset.filter || "all";
+  photoCards.forEach(card => {
+    card.classList.toggle("hidden", activeFilter !== "all" && card.dataset.category !== activeFilter);
+  });
+};
 
 lightboxClose.addEventListener("click", closeLightbox);
 lightboxPrev.addEventListener("click", () => showPhoto(currentPhotoIndex - 1));
