@@ -483,6 +483,7 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
 .preset-price{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:900;color:#f4f8ff;margin-top:12px;line-height:1}.preset-price small{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:1.5px;margin-left:4px}
 .preset-product-footer .btn{font-size:10px;padding:10px 12px}
 .preset-shop-footnote{color:var(--muted);font-size:11px;text-align:center;margin-top:22px;line-height:1.6}
+.preset-button-message{min-height:18px;margin-top:9px;color:var(--blue2);font-size:11px;line-height:1.5}.preset-buy-button{min-width:110px}
 @media(max-width:850px){.preset-products{grid-template-columns:repeat(2,minmax(0,1fr))}.preset-shop-heading{align-items:start;flex-direction:column}}
 @media(max-width:560px){.preset-products{grid-template-columns:1fr}.preset-product-art{height:190px}}
 
@@ -850,10 +851,11 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
         </div>
         <div class="preset-product-info">
           <div class="preset-product-kicker">PRESET COLLECTION 01</div>
-          <h3>Sports Preset Pack</h3>
+          <h3>Flicks Sports Preset Pack</h3>
           <p>Product details and sample edits will be added soon.</p>
           <div class="preset-price">$15 <small>USD</small></div>
-          <div class="preset-product-footer"><span>COMING SOON</span><button class="btn btn-outline" type="button" disabled>COMING SOON</button></div>
+          <div class="preset-product-footer"><span>AVAILABLE SOON</span><button class="btn btn-primary preset-buy-button" type="button" data-preset-name="Flicks Sports Preset Pack" data-preset-price="15">BUY NOW</button></div>
+          <p class="preset-button-message" aria-live="polite"></p>
         </div>
       </article>
       <article class="preset-product-card reveal">
@@ -862,10 +864,11 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
         </div>
         <div class="preset-product-info">
           <div class="preset-product-kicker">PRESET COLLECTION 02</div>
-          <h3>Cinematic Preset Pack</h3>
+          <h3>Flicks Ultimate Preset Pack</h3>
           <p>Product details and sample edits will be added soon.</p>
           <div class="preset-price">$30 <small>USD</small></div>
-          <div class="preset-product-footer"><span>COMING SOON</span><button class="btn btn-outline" type="button" disabled>COMING SOON</button></div>
+          <div class="preset-product-footer"><span>AVAILABLE SOON</span><button class="btn btn-primary preset-buy-button" type="button" data-preset-name="Flicks Ultimate Preset Pack" data-preset-price="30">BUY NOW</button></div>
+          <p class="preset-button-message" aria-live="polite"></p>
         </div>
       </article>
       <article class="preset-product-card reveal">
@@ -874,14 +877,15 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
         </div>
         <div class="preset-product-info">
           <div class="preset-product-kicker">PRESET COLLECTION 03</div>
-          <h3>Complete Preset Bundle</h3>
+          <h3>Flicks Ultimate Preset Bundle</h3>
           <p>Product details and sample edits will be added soon.</p>
           <div class="preset-price">$50 <small>USD</small></div>
-          <div class="preset-product-footer"><span>COMING SOON</span><button class="btn btn-outline" type="button" disabled>COMING SOON</button></div>
+          <div class="preset-product-footer"><span>AVAILABLE SOON</span><button class="btn btn-primary preset-buy-button" type="button" data-preset-name="Flicks Ultimate Preset Bundle" data-preset-price="50">BUY NOW</button></div>
+          <p class="preset-button-message" aria-live="polite"></p>
         </div>
       </article>
     </div>
-    <p class="preset-shop-footnote">Prices are displayed for preview. Purchase buttons, checkout, and digital delivery will be added when the preset packs are ready.</p>
+    <p class="preset-shop-footnote">Prices are displayed for preview. The Buy Now buttons are previews for now. Checkout and digital delivery will be connected when the preset packs are ready.</p>
   </div>
 </section>
 
@@ -1434,6 +1438,13 @@ document.getElementById("copyPaymentNumber").addEventListener("click", async () 
 /* =========================================
    FOOTER YEAR
    ========================================= */
+document.querySelectorAll(".preset-buy-button").forEach(button => {
+  button.addEventListener("click", () => {
+    const card = button.closest(".preset-product-info");
+    const message = card?.querySelector(".preset-button-message");
+    if (message) message.textContent = "Thanks for your interest! Checkout is coming soon.";
+  });
+});
 document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
