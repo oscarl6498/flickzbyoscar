@@ -47,6 +47,94 @@
   }
   function status(id, message) { setText(id, message); }
 
+  // Public portfolio albums live in a separate PUBLIC bucket.
+  // This is intentionally separate from the private client-delivery bucket above.
+  const PUBLIC_PORTFOLIO_BUCKET = "flickz-public-gallery";
+  const PUBLIC_PORTFOLIO_ALBUMS = [
+    { folder: "football-next-level", category: "football", label: "Next Level", title: "Next Level" },
+    { folder: "basketball-holy-child-a-tournament", category: "basketball", label: "Holy Child A Tournament", title: "Holy Child A Tournament" }
+  ];
+
+  async function loadPublicPortfolioAlbums() {
+    const grid = el("galleryGrid");
+    if (!grid || !sb) {
+      status("publicGalleryStatus", "Public event albums will appear after the gallery storage is configured.");
+      return;
+    }
+
+    const statusEl = el("publicGalleryStatus");
+    if (statusEl) statusEl.textContent = "Loading public event albums...";
+    grid.querySelectorAll('[data-public-album="true"]').forEach(card => card.remove());
+
+    let totalLoaded = 0;
+    const albumCounts = [];
+    for (const album of PUBLIC_PORTFOLIO_ALBUMS) {
+      const { data: files, error } = await sb.storage
+        .from(PUBLIC_PORTFOLIO_BUCKET)
+        .list(album.folder, {
+          limit: 200,
+          offset: 0,
+          sortBy: { column: "name", order: "asc" }
+        });
+
+      if (error) {
+        console.warn("Could not list public album:", album.folder, error.message);
+        continue;
+      }
+
+      const images = (files || []).filter(file =>
+        file.name &&
+        file.name !== ".emptyFolderPlaceholder" &&
+        file.metadata &&
+        (!file.metadata.mimetype || String(file.metadata.mimetype).startsWith("image/"))
+      );
+
+      for (const file of images) {
+        const path = album.folder + "/" + file.name;
+        const { data } = sb.storage.from(PUBLIC_PORTFOLIO_BUCKET).getPublicUrl(path);
+        if (!data?.publicUrl) continue;
+
+        const card = document.createElement("div");
+        card.className = "photo-card reveal";
+        card.dataset.category = album.category;
+        card.dataset.title = album.title + " — " + file.name;
+        card.dataset.publicAlbum = "true";
+        card.innerHTML = `
+          <img src="${safe(data.publicUrl)}" alt="${safe("FLICKZ BY OSCAR " + album.title + " photograph")}" loading="lazy" decoding="async">
+          <div class="photo-overlay">
+            <small>${safe(album.label)}</small>
+            <h3>${safe(album.title)}</h3>
+            <span class="view-label">VIEW PHOTO ↗</span>
+          </div>`;
+        grid.appendChild(card);
+        totalLoaded++;
+      }
+      albumCounts.push(album.label + ": " + images.length);
+    }
+
+    if (typeof window.refreshPortfolioGallery === "function") window.refreshPortfolioGallery();
+    grid.querySelectorAll(".photo-card.reveal:not(.visible)").forEach(card => {
+      if (window.IntersectionObserver) {
+        // The site's existing reveal observer won't see elements added after page load,
+        // so make new album cards visible immediately and keep their lazy-loaded images.
+        card.classList.add("visible");
+      } else {
+        card.classList.add("visible");
+      }
+    });
+
+    if (statusEl) {
+      statusEl.textContent = totalLoaded
+        ? "Public event albums loaded — " + albumCounts.join(" · ") + "."
+        : "No public event photos have been uploaded yet. Add the photos to the matching folders in Supabase Storage.";
+    }
+  }
+
+  loadPublicPortfolioAlbums().catch(error => {
+    console.error("Public portfolio loading failed:", error);
+    status("publicGalleryStatus", "Public event albums could not be loaded. Please check the public gallery bucket setup.");
+  });
+
   const portalForm = el("clientPortalForm");
   portalForm?.addEventListener("submit", async event => {
     event.preventDefault();
