@@ -235,9 +235,9 @@
 
   const PRESET_FILE_BUCKET = "flickz-preset-files";
   const PRESET_PRODUCTS = [
-    { key: "flicks-sports-preset-pack", stateId: "presetAssetStateSports" },
-    { key: "flicks-ultimate-preset-pack", stateId: "presetAssetStateUltimate" },
-    { key: "flicks-ultimate-preset-bundle", stateId: "presetAssetStateBundle" }
+    { key: "flicks-sports-preset-pack", name: "Flicks Sports Preset Pack", stateId: "presetAssetStateSports" },
+    { key: "flicks-ultimate-preset-pack", name: "Flicks Ultimate Preset Pack", stateId: "presetAssetStateUltimate" },
+    { key: "flicks-ultimate-preset-bundle", name: "Flicks Ultimate Preset Bundle", stateId: "presetAssetStateBundle" }
   ];
 
   async function refreshPresetAssetManager() {
@@ -263,7 +263,7 @@
     const salesList = el("presetSalesList");
     if (salesList) salesList.innerHTML = (sales || []).map(sale => {
       const product = PRESET_PRODUCTS.find(item => item.key === sale.product_key);
-      const label = product ? product.key.replaceAll("-", " ") : sale.product_key;
+      const label = product ? product.name : sale.product_key;
       return '<div class="preset-sale-row"><div><strong>' + safe(label) + '</strong><small>' + safe(sale.buyer_email || "Customer email unavailable") + ' · ' + new Date(sale.created_at).toLocaleString() + '</small></div><strong>
     if (!sb) return;
     const { data: userData, error: userError } = await sb.auth.getUser();
