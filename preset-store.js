@@ -2,7 +2,7 @@
   "use strict";
   const SUPABASE_URL = "https://qxkepxwaaqkriqsgzcvf.supabase.co";
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_p6ZaNm7Kai_q6bdg5W-vnw_00HLwGJc";
-  const ENDPOINT = SUPABASE_URL + "/functions/v1/preset-checkout";
+  const ENDPOINT = SUPABASE_URL + "/functions/v1/presets-checkout";
   const buttons = [...document.querySelectorAll(".preset-buy-button")];
   const statuses = new Map(buttons.map(button => [button.dataset.productKey, button.closest(".preset-product-info")?.querySelector(".preset-button-message")]));
   const setStatus = (key, value) => { const node = statuses.get(key); if (node) node.textContent = value; };
