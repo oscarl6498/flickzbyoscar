@@ -271,8 +271,22 @@
     const { data: albumRows, error: albumError } = await sb.from("flickz_albums").select("id,title,description,access_code,is_active,created_at").order("created_at", { ascending: false });
     if (albumError) throw albumError;
     albums = albumRows || []; renderAlbums();
-    await refreshPublicPortfolioAdmin();
-    await refreshPresetAssetManager();
+
+    // Optional portfolio and preset-store panels must never prevent the core
+    // photographer login/gallery dashboard from loading.
+    try {
+      await refreshPublicPortfolioAdmin();
+    } catch (error) {
+      status("publicPortfolioAdminStatus", "Public gallery manager could not load: " + (error.message || "Please refresh."));
+    }
+    try {
+      await refreshPresetAssetManager();
+    } catch (error) {
+      status("presetAssetStatus", "Preset manager could not load: " + (error.message || "Please refresh."));
+      const salesList = el("presetSalesList");
+      if (salesList) salesList.innerHTML = '<p class="portal-note">Preset sales could not be loaded. Your gallery login is still active.</p>';
+    }
+
     const { data: submissions, error: submissionsError } = await sb.from("flickz_selections").select("id,album_id,photo_ids,instagram_consent,instagram_approved,created_at").order("created_at", { ascending: false }).limit(100);
     if (submissionsError) throw submissionsError;
     const selectionIds = (submissions || []).map(item => item.id);
