@@ -2,11 +2,11 @@
 -- Run once in Supabase SQL Editor. Keeps preset files private.
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('flickz-preset-files', 'flickz-preset-files', false, 104857600, array['application/zip'])
+values ('flickz-preset-files', 'flickz-preset-files', false, 104857600, array['application/zip', 'application/x-zip-compressed'])
 on conflict (id) do update
 set public = false,
     file_size_limit = 104857600,
-    allowed_mime_types = array['application/zip'];
+    allowed_mime_types = array['application/zip', 'application/x-zip-compressed'];
 
 create table if not exists public.flickz_preset_assets (
   product_key text primary key check (product_key in (
