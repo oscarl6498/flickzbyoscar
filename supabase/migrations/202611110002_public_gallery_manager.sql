@@ -103,6 +103,9 @@ with check (
 );
 
 -- Storage object listing is enabled only for the dedicated public portfolio bucket.
+-- Remove the broader insert policy from the earlier public-bucket draft, if it was already applied.
+drop policy if exists "Authenticated users can upload FLICKZ portfolio photos" on storage.objects;
+
 drop policy if exists "Public can list FLICKZ portfolio photos" on storage.objects;
 create policy "Public can list FLICKZ portfolio photos"
 on storage.objects
