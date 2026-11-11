@@ -50,9 +50,11 @@ alter table public.flickz_public_photos enable row level security;
 
 revoke all on public.flickz_public_albums from anon, authenticated;
 revoke all on public.flickz_public_photos from anon, authenticated;
-grant select on public.flickz_public_albums to anon, authenticated;
+grant select (id, title, description, category, is_active, sort_order, created_at)
+  on public.flickz_public_albums to anon;
 grant insert, select, update, delete on public.flickz_public_albums to authenticated;
-grant select on public.flickz_public_photos to anon, authenticated;
+grant select (id, album_id, file_name, storage_path, sort_order, created_at)
+  on public.flickz_public_photos to anon;
 grant insert, select, update, delete on public.flickz_public_photos to authenticated;
 
 drop policy if exists "Public can view active FLICKZ public albums" on public.flickz_public_albums;
@@ -102,17 +104,27 @@ with check (
   )
 );
 
--- Storage object listing is enabled only for the dedicated public portfolio bucket.
--- Remove the broader insert policy from the earlier public-bucket draft, if it was already applied.
+-- Remove policies from the earlier public-bucket draft, if they were already applied.
 drop policy if exists "Authenticated users can upload FLICKZ portfolio photos" on storage.objects;
-
 drop policy if exists "Public can list FLICKZ portfolio photos" on storage.objects;
-create policy "Public can list FLICKZ portfolio photos"
+
+-- Storage removal checks SELECT as well as DELETE, so owners can select only their own objects.
+drop policy if exists "Owners can select FLICKZ public portfolio photos" on storage.objects;
+create policy "Owners can select FLICKZ public portfolio photos"
 on storage.objects
 for select
-to anon, authenticated
-using (bucket_id = 'flickz-public-gallery');
+to authenticated
+using (
+  bucket_id = 'flickz-public-gallery'
+  and split_part(name, '/', 1) = (select auth.uid())::text
+  and exists (
+    select 1 from public.flickz_public_albums a
+    where a.id::text = split_part(name, '/', 2)
+      and a.owner_id = (select auth.uid())
+  )
+);
 
+-- Public image delivery still works through public URLs. The object list itself stays private.
 -- Upload paths are user_id/album_id/file. Only that album's owner can add or delete objects.
 drop policy if exists "Owners can upload FLICKZ public portfolio photos" on storage.objects;
 create policy "Owners can upload FLICKZ public portfolio photos"
