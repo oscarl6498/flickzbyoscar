@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#05080c">
+<title>Your Preset Download | FLICKZ BY OSCAR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#05080c;color:#f4f8ff;font-family:"DM Sans",sans-serif;display:grid;place-items:center;padding:24px}.card{width:min(620px,100%);background:#0b111b;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:38px;text-align:center}.label{color:#53b5ff;font-size:11px;font-weight:800;letter-spacing:4px}.mark{width:58px;height:58px;margin:22px auto;border:1px solid #168cff;border-radius:50%;display:grid;place-items:center;color:#53b5ff;font-size:30px}.card h1{font-family:"Barlow Condensed",sans-serif;font-size:clamp(38px,8vw,58px);line-height:.95;margin:12px 0 14px;text-transform:uppercase}.card p{color:#8b9bb0;font-size:14px;line-height:1.8}.status{margin:22px auto;padding:14px;border:1px solid rgba(255,255,255,.1);border-radius:7px;color:#b9cee5;font-size:13px;line-height:1.6}.button{display:inline-flex;align-items:center;justify-content:center;background:#168cff;color:white;text-decoration:none;border:0;border-radius:6px;padding:15px 23px;font-weight:800;font-size:12px;letter-spacing:1px;cursor:pointer;margin-top:10px}.button[hidden]{display:none}.back{display:inline-block;margin-top:25px;color:#8b9bb0;font-size:12px;text-decoration:none}.fine{font-size:11px!important;margin-top:22px}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="label">FLICKZ BY OSCAR · PRESET SHOP</div>
+  <div class="mark">✓</div>
+  <h1>THANK YOU FOR YOUR ORDER.</h1>
+  <p id="productName">We're confirming your payment and preparing your preset download.</p>
+  <div class="status" id="downloadStatus" aria-live="polite">Verifying your completed Stripe checkout...</div>
+  <a class="button" id="downloadButton" href="#" hidden>DOWNLOAD YOUR PRESET ↓</a>
+  <p class="fine">Your download link is temporary. Save the ZIP file to your device after downloading. You can refresh this page to request a fresh link while your checkout session remains available.</p>
+  <a class="back" href="/#preset-shop">← BACK TO FLICKZ BY OSCAR</a>
+</main>
+<script>
+(() => {
+  const SUPABASE_URL = "https://qxkepxwaaqkriqsgzcvf.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_p6ZaNm7Kai_q6bdg5W-vnw_00HLwGJc";
+  const ENDPOINT = SUPABASE_URL + "/functions/v1/preset-checkout";
+  const status = document.getElementById("downloadStatus");
+  const button = document.getElementById("downloadButton");
+  const sessionId = new URLSearchParams(location.search).get("session_id");
+  if (!sessionId) {
+    status.textContent = "No checkout session was found. If you completed a payment, please contact FLICKZ BY OSCAR for help.";
+    return;
+  }
+  fetch(ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "apikey": SUPABASE_PUBLISHABLE_KEY },
+    body: JSON.stringify({ action: "create-download-link", session_id: sessionId })
+  }).then(async response => {
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || "We could not verify the payment yet.");
+    document.getElementById("productName").textContent = result.product_name + " is ready.";
+    status.textContent = "Payment verified. Your secure download link is ready.";
+    button.href = result.download_url;
+    button.hidden = false;
+  }).catch(error => {
+    status.textContent = error.message || "We could not prepare the download. Refresh this page in a moment or contact support.";
+  });
+})();
+</script>
+</body>
+</html>
