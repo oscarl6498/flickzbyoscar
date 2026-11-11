@@ -496,50 +496,81 @@
     } finally { button.disabled = false; }
   });
 
+  async function expandPublicPhotoUploads(selectedFiles) {
+    const expanded = [];
+    const errors = [];
+    for (const file of selectedFiles) {
+      const isZip = /\.zip$/i.test(file.name) || file.type === "application/zip" || file.type === "application/x-zip-compressed";
+      if (!isZip) {
+        expanded.push({ name: file.name, blob: file, type: file.type });
+        continue;
+      }
+      if (!window.JSZip) throw new Error("ZIP support could not load. Refresh this page and try again.");
+      status("publicPortfolioAdminStatus", "Opening " + file.name + "...");
+      const archive = await window.JSZip.loadAsync(file);
+      const entries = Object.values(archive.files).filter(entry =>
+        !entry.dir && /\.(jpe?g|png|webp)$/i.test(entry.name)
+      );
+      for (const entry of entries) {
+        const extension = entry.name.split(".").pop().toLowerCase();
+        const type = extension === "png" ? "image/png" : extension === "webp" ? "image/webp" : "image/jpeg";
+        const blob = await entry.async("blob");
+        const name = entry.name.split("/").pop() || ("photo-" + (expanded.length + 1) + "." + extension);
+        expanded.push({ name, blob, type });
+      }
+      if (!entries.length) errors.push(file.name + ": no JPG, PNG, or WebP photos found inside this ZIP.");
+    }
+    return { files: expanded, errors };
+  }
+
   el("uploadPublicPhotosForm")?.addEventListener("submit", async event => {
     event.preventDefault();
     const albumId = el("publicUploadAlbum").value;
-    const files = [...el("publicPhotoFiles").files];
-    if (!albumId || !files.length) return status("publicPortfolioAdminStatus", "Choose an album and at least one photo.");
+    const selectedFiles = [...el("publicPhotoFiles").files];
+    if (!albumId || !selectedFiles.length) return status("publicPortfolioAdminStatus", "Choose an album and at least one photo or ZIP file.");
     const button = event.currentTarget.querySelector('button[type="submit"]');
     button.disabled = true;
-    button.textContent = "UPLOADING...";
+    button.textContent = "PREPARING...";
     try {
       const { data: userResult, error: userError } = await sb.auth.getUser();
       if (userError || !userResult.user) throw new Error("Please sign in again.");
+      const expanded = await expandPublicPhotoUploads(selectedFiles);
+      const files = expanded.files;
+      const errors = expanded.errors;
+      if (!files.length) throw new Error(errors.join("\n") || "No supported photo files were found.");
       const currentPhotos = publicPortfolioPhotos.filter(photo => photo.album_id === albumId);
       let nextOrder = currentPhotos.reduce((max, photo) => Math.max(max, Number(photo.sort_order) || 0), 0) + 1;
       let uploaded = 0;
-      const errors = [];
-      for (const file of files) {
-        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 20 * 1024 * 1024) {
-          errors.push(file.name + ": use JPG, PNG, or WebP under 20 MB.");
+      button.textContent = "UPLOADING...";
+      for (const photoFile of files) {
+        if (!["image/jpeg", "image/png", "image/webp"].includes(photoFile.type) || photoFile.blob.size > 20 * 1024 * 1024) {
+          errors.push(photoFile.name + ": use JPG, PNG, or WebP under 20 MB.");
           continue;
         }
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const safeName = photoFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
         const path = userResult.user.id + "/" + albumId + "/" + crypto.randomUUID() + "-" + safeName;
-        const { error: uploadError } = await sb.storage.from(PUBLIC_PORTFOLIO_BUCKET).upload(path, file, {
-          contentType: file.type,
+        const { error: uploadError } = await sb.storage.from(PUBLIC_PORTFOLIO_BUCKET).upload(path, photoFile.blob, {
+          contentType: photoFile.type,
           upsert: false
         });
         if (uploadError) {
-          errors.push(file.name + ": " + uploadError.message);
+          errors.push(photoFile.name + ": " + uploadError.message);
           continue;
         }
         const { error: rowError } = await sb.from("flickz_public_photos").insert({
           album_id: albumId,
           owner_id: userResult.user.id,
           storage_path: path,
-          file_name: file.name,
+          file_name: photoFile.name,
           sort_order: nextOrder++
         });
         if (rowError) {
           await sb.storage.from(PUBLIC_PORTFOLIO_BUCKET).remove([path]);
-          errors.push(file.name + ": " + rowError.message);
+          errors.push(photoFile.name + ": " + rowError.message);
           continue;
         }
         uploaded++;
-        status("publicPortfolioAdminStatus", "Uploading... " + uploaded + " of " + files.length + " photos saved.");
+        status("publicPortfolioAdminStatus", "Uploading " + uploaded + " of " + files.length + " photos...");
       }
       el("publicPhotoFiles").value = "";
       await refreshPublicPortfolioAdmin();
@@ -552,6 +583,7 @@
       button.textContent = "UPLOAD PUBLIC PHOTOS";
     }
   });
+
 
   loginForm?.addEventListener("submit", async event => {
     event.preventDefault();
