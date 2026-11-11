@@ -449,6 +449,42 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
   .admin-access{align-items:flex-start;flex-direction:column}
   .galaxy-banner::after{right:-100px}
 }
+
+/* GALLERY VIEW MORE */
+.gallery-more-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding-top:28px}
+.gallery-count{color:var(--muted);font-size:12px;letter-spacing:.5px}
+.photo-card.gallery-more-hidden{display:none!important}
+#galleryViewMore[hidden]{display:none!important}
+
+/* PRESET SHOP — storefront preview only; commerce is intentionally not connected */
+.preset-shop-section{background:linear-gradient(180deg,#070c14 0%,#05080c 100%);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.preset-shop-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:35px}
+.preset-shop-note{flex-shrink:0;border:1px solid rgba(22,140,255,.45);border-radius:6px;padding:14px 20px;color:#dcecff;font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;text-align:center;line-height:1.6}
+.preset-shop-note span{color:var(--blue2)}
+.preset-products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.preset-product-card{background:var(--panel);border:1px solid var(--line);border-radius:9px;overflow:hidden;transition:.3s ease}
+.preset-product-card:hover{transform:translateY(-5px);border-color:rgba(22,140,255,.55)}
+.preset-product-art{height:225px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;background:#0b1421}
+.preset-product-art::before{content:"";position:absolute;width:190px;height:190px;border:1px solid rgba(255,255,255,.18);border-radius:50%;right:-35px;top:15px;box-shadow:0 0 0 22px rgba(255,255,255,.025),0 0 0 44px rgba(255,255,255,.02)}
+.preset-product-art::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(22,140,255,.12),transparent 58%)}
+.preset-art-one{background:radial-gradient(circle at 80% 35%,#174d7c 0%,#0a1727 48%,#05080c 100%)}
+.preset-art-two{background:radial-gradient(circle at 75% 45%,#34475e 0%,#111c2a 42%,#05080c 100%)}
+.preset-art-three{background:radial-gradient(circle at 80% 38%,#1266a8 0%,#10253d 40%,#05080c 100%)}
+.preset-product-art span,.preset-product-art strong,.preset-product-art small{position:relative;z-index:1}
+.preset-product-art span{font-size:11px;color:#a9c6e6;letter-spacing:3px;font-weight:800}
+.preset-product-art strong{font-family:"Barlow Condensed",sans-serif;font-size:clamp(29px,3vw,43px);line-height:.88;font-weight:900;font-style:italic;letter-spacing:1px;text-shadow:0 5px 24px rgba(0,0,0,.4)}
+.preset-product-art small{font-size:9px;color:#77c4ff;letter-spacing:4px;font-weight:800}
+.preset-product-info{padding:20px}
+.preset-product-kicker{font-size:10px;font-weight:800;color:var(--blue2);letter-spacing:2px}
+.preset-product-info h3{font-family:"Barlow Condensed",sans-serif;font-size:26px;text-transform:uppercase;margin:8px 0}
+.preset-product-info p{color:var(--muted);font-size:12px;line-height:1.7;min-height:40px}
+.preset-product-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:20px;padding-top:15px;border-top:1px solid var(--line)}
+.preset-product-footer>span{font-size:10px;color:var(--blue2);font-weight:800;letter-spacing:1.5px}
+.preset-product-footer .btn{font-size:10px;padding:10px 12px}
+.preset-shop-footnote{color:var(--muted);font-size:11px;text-align:center;margin-top:22px;line-height:1.6}
+@media(max-width:850px){.preset-products{grid-template-columns:repeat(2,minmax(0,1fr))}.preset-shop-heading{align-items:start;flex-direction:column}}
+@media(max-width:560px){.preset-products{grid-template-columns:1fr}.preset-product-art{height:190px}}
+
 </style>
 
 <style>
@@ -539,6 +575,7 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
       <a href="#about">About</a>
       <a href="#packages">Packages</a>
       <a href="#services">Services</a>
+      <a href="#preset-shop">Preset Shop</a>
       <a href="#booking">Book</a>
       <a href="#support">Support</a>
       <a href="#instagram">Instagram</a>
@@ -645,6 +682,10 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
         <img src="photo-10.webp" alt="FLICKZ BY OSCAR football photograph 10" loading="lazy">
         <div class="photo-overlay"><small>Football Galaxy</small><h3>THE EXPERIENCE</h3><span class="view-label">VIEW PHOTO ↗</span></div>
       </div>
+    </div>
+    <div class="gallery-more-wrap" id="galleryMoreWrap">
+      <p class="gallery-count" id="galleryCount" aria-live="polite">Showing the first 9 photos</p>
+      <button class="btn btn-outline" id="galleryViewMore" type="button">VIEW MORE PHOTOS ↓</button>
     </div>
   </div>
 </section>
@@ -786,6 +827,57 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
         <p>Personal shoots and creative photography with a unique visual style.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- PRESET SHOP -->
+<section class="section preset-shop-section" id="preset-shop">
+  <div class="container">
+    <div class="preset-shop-heading reveal">
+      <div>
+        <div class="section-label">THE FLICKZ EDIT</div>
+        <h2 class="section-title">PRESET <span>SHOP.</span></h2>
+        <p class="section-description">Bring your edits closer to the FLICKZ BY OSCAR look. Preset packs are on the way.</p>
+      </div>
+      <div class="preset-shop-note">DIGITAL PRESETS<br><span>COMING SOON</span></div>
+    </div>
+
+    <div class="preset-products">
+      <article class="preset-product-card reveal">
+        <div class="preset-product-art preset-art-one">
+          <span>F / 01</span><strong>THE<br>GAME DAY<br>LOOK</strong><small>FLICKZ EDIT</small>
+        </div>
+        <div class="preset-product-info">
+          <div class="preset-product-kicker">PRESET COLLECTION 01</div>
+          <h3>Sports Preset Pack</h3>
+          <p>Product details and sample edits will be added soon.</p>
+          <div class="preset-product-footer"><span>COMING SOON</span><button class="btn btn-outline" type="button" disabled>COMING SOON</button></div>
+        </div>
+      </article>
+      <article class="preset-product-card reveal">
+        <div class="preset-product-art preset-art-two">
+          <span>F / 02</span><strong>AFTER<br>THE<br>WHISTLE</strong><small>FLICKZ EDIT</small>
+        </div>
+        <div class="preset-product-info">
+          <div class="preset-product-kicker">PRESET COLLECTION 02</div>
+          <h3>Cinematic Preset Pack</h3>
+          <p>Product details and sample edits will be added soon.</p>
+          <div class="preset-product-footer"><span>COMING SOON</span><button class="btn btn-outline" type="button" disabled>COMING SOON</button></div>
+        </div>
+      </article>
+      <article class="preset-product-card reveal">
+        <div class="preset-product-art preset-art-three">
+          <span>F / 03</span><strong>THE<br>FLICKZ<br>BUNDLE</strong><small>FLICKZ EDIT</small>
+        </div>
+        <div class="preset-product-info">
+          <div class="preset-product-kicker">PRESET COLLECTION 03</div>
+          <h3>Complete Preset Bundle</h3>
+          <p>Product details and sample edits will be added soon.</p>
+          <div class="preset-product-footer"><span>COMING SOON</span><button class="btn btn-outline" type="button" disabled>COMING SOON</button></div>
+        </div>
+      </article>
+    </div>
+    <p class="preset-shop-footnote">Product previews, pricing, purchase buttons, checkout, and digital delivery will be added when the preset packs are ready.</p>
   </div>
 </section>
 
@@ -1119,18 +1211,54 @@ backTop.addEventListener("click", () => {
    ========================================= */
 const filterButtons = document.querySelectorAll(".filter-btn");
 let photoCards = [...document.querySelectorAll(".photo-card")];
+const GALLERY_BATCH_SIZE = 9;
+let galleryVisibleCount = GALLERY_BATCH_SIZE;
+const galleryViewMore = document.getElementById("galleryViewMore");
+const galleryCount = document.getElementById("galleryCount");
+
+function bindPortfolioPhotoCard(card) {
+  if (card.dataset.lightboxBound === "true") return;
+  card.dataset.lightboxBound = "true";
+  card.addEventListener("click", () => openLightbox(getVisiblePhotos().indexOf(card)));
+}
+
+function getFilteredGalleryCards() {
+  const activeFilter = document.querySelector(".filter-btn.active")?.dataset.filter || "all";
+  return photoCards.filter(card => activeFilter === "all" || card.dataset.category === activeFilter);
+}
+
+function applyGalleryPagination(reset = false) {
+  if (reset) galleryVisibleCount = GALLERY_BATCH_SIZE;
+  const filtered = getFilteredGalleryCards();
+  const shownCards = new Set(filtered.slice(0, galleryVisibleCount));
+
+  photoCards.forEach(card => {
+    const isFilteredOut = !filtered.includes(card);
+    card.classList.toggle("hidden", isFilteredOut);
+    card.classList.toggle("gallery-more-hidden", !isFilteredOut && !shownCards.has(card));
+  });
+
+  const shown = Math.min(galleryVisibleCount, filtered.length);
+  if (galleryCount) galleryCount.textContent = filtered.length
+    ? "Showing " + shown + " of " + filtered.length + " photos"
+    : "No photos in this category yet";
+  if (galleryViewMore) {
+    galleryViewMore.hidden = filtered.length <= galleryVisibleCount;
+    galleryViewMore.textContent = "VIEW MORE PHOTOS (" + Math.min(GALLERY_BATCH_SIZE, filtered.length - galleryVisibleCount) + ") ↓";
+  }
+}
 
 filterButtons.forEach(button => {
   button.addEventListener("click", () => {
     filterButtons.forEach(item => item.classList.remove("active"));
     button.classList.add("active");
-    const filter = button.dataset.filter;
-
-    photoCards.forEach(card => {
-      const matches = filter === "all" || card.dataset.category === filter;
-      card.classList.toggle("hidden", !matches);
-    });
+    applyGalleryPagination(true);
   });
+});
+
+galleryViewMore?.addEventListener("click", () => {
+  galleryVisibleCount += GALLERY_BATCH_SIZE;
+  applyGalleryPagination(false);
 });
 
 /* =========================================
@@ -1147,7 +1275,7 @@ let currentPhotoIndex = 0;
 let visiblePhotos = [];
 
 function getVisiblePhotos() {
-  return photoCards.filter(card => !card.classList.contains("hidden"));
+  return photoCards.filter(card => !card.classList.contains("hidden") && !card.classList.contains("gallery-more-hidden"));
 }
 
 function showPhoto(index) {
@@ -1177,21 +1305,13 @@ function closeLightbox() {
   lightboxImage.src = "";
 }
 
-function bindPortfolioPhotoCard(card) {
-  if (card.dataset.lightboxBound === "true") return;
-  card.dataset.lightboxBound = "true";
-  card.addEventListener("click", () => openLightbox(getVisiblePhotos().indexOf(card)));
-}
-
 photoCards.forEach(bindPortfolioPhotoCard);
+applyGalleryPagination(false);
 
 window.refreshPortfolioGallery = function() {
   photoCards = [...document.querySelectorAll(".photo-card")];
   photoCards.forEach(bindPortfolioPhotoCard);
-  const activeFilter = document.querySelector(".filter-btn.active")?.dataset.filter || "all";
-  photoCards.forEach(card => {
-    card.classList.toggle("hidden", activeFilter !== "all" && card.dataset.category !== activeFilter);
-  });
+  applyGalleryPagination(false);
 };
 
 lightboxClose.addEventListener("click", closeLightbox);
@@ -1314,7 +1434,7 @@ document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-<script src="client-gallery.js?v=public-manager-zip-20261111" defer></script>
+<script src="client-gallery.js?v=view-more-preset-shop-20261111" defer></script>
 
 </body>
 </html>
