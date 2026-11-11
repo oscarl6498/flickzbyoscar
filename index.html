@@ -450,6 +450,33 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
   .galaxy-banner::after{right:-100px}
 }
 </style>
+
+<style>
+/* PRIVATE CLIENT GALLERY */
+.client-portal{background:#060a11}
+.client-portal .portal-card{background:linear-gradient(145deg,#101b2a,#080d15);border:1px solid var(--line);border-radius:9px;padding:26px;margin-top:26px}
+.portal-form{display:flex;gap:10px;max-width:560px;margin-top:22px;flex-wrap:wrap}
+.portal-form input{flex:1;min-width:210px;padding:14px;background:#070c14;border:1px solid var(--line);border-radius:5px;color:white;text-transform:uppercase}
+.portal-status{color:var(--blue2);font-size:13px;line-height:1.7;margin-top:12px;white-space:pre-wrap}
+.portal-hidden{display:none!important}
+.client-photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
+.client-photo{background:#05080c;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.client-photo.selected{outline:2px solid var(--blue)}
+.client-photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.client-photo label{display:flex;align-items:center;gap:9px;padding:12px;font-size:12px;color:#dceaff}
+.client-photo input{accent-color:var(--blue);width:17px;height:17px}
+.portal-consent{display:flex;gap:10px;align-items:flex-start;margin:22px 0;color:#c5d0df;font-size:12px;line-height:1.7}
+.portal-consent input{margin-top:3px;accent-color:var(--blue)}
+.portal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.portal-admin{margin-top:32px;background:#0b111b;border:1px solid var(--line);border-radius:9px;padding:26px}
+.portal-admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.portal-admin input,.portal-admin select{width:100%;padding:13px;background:#070c13;border:1px solid var(--line);color:white;border-radius:5px}
+.admin-album-row,.admin-submission{padding:14px;border:1px solid var(--line);border-radius:6px;margin-top:10px;font-size:13px;line-height:1.7}
+.admin-album-row{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.admin-album-row small{display:block;color:var(--muted);margin-top:5px}
+.portal-note{color:var(--muted);font-size:12px;line-height:1.7;margin-top:12px}
+@media(max-width:700px){.portal-admin-grid{grid-template-columns:1fr}.client-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.portal-form{flex-direction:column}.portal-form button{width:100%}}
+</style>
 </head>
 
 <body>
@@ -481,6 +508,7 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
       <a href="#support">Support</a>
       <a href="#instagram">Instagram</a>
       <a href="#contact" class="nav-cta">Contact</a>
+          <a href="#client-portal">Client Portal</a>
     </nav>
   </div>
 </header>
@@ -799,6 +827,73 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
   </div>
 </section>
 
+
+<!-- PRIVATE CLIENT PHOTO GALLERIES -->
+<section class="section client-portal" id="client-portal">
+  <div class="container">
+    <div class="section-label">PRIVATE CLIENT ACCESS</div>
+    <h2 class="section-title">YOUR PHOTOS. <span>YOUR MOMENT.</span></h2>
+    <p class="section-description">Enter the private gallery code Oscar gave you to view your photos, choose your favorites, and download your selections.</p>
+
+    <div class="portal-card">
+      <form id="clientPortalForm" class="portal-form">
+        <input id="portalCode" type="text" placeholder="ENTER YOUR GALLERY CODE" required maxlength="24" autocomplete="one-time-code" autocapitalize="characters">
+        <button class="btn btn-primary" type="submit">VIEW MY PHOTOS ↗</button>
+      </form>
+      <p class="portal-status" id="portalMessage" aria-live="polite"></p>
+      <div id="clientGallery" class="portal-hidden">
+        <div style="margin-top:25px">
+          <div class="section-label">YOUR ALBUM</div>
+          <h3 id="clientAlbumTitle" class="section-title" style="font-size:42px">PHOTO GALLERY</h3>
+          <p id="clientAlbumDescription" class="section-description"></p>
+        </div>
+        <div class="client-photo-grid" id="clientPhotoGrid"></div>
+        <label class="portal-consent"><input type="checkbox" id="instagramConsent"><span>I am the adult rights holder or the parent/legal guardian of any minor pictured, and I give FLICKZ BY OSCAR permission to feature the selected photos on Instagram/social media. This is optional. Do not check this box unless you have authority to grant permission for everyone pictured.</span></label>
+        <div class="portal-actions">
+          <button class="btn btn-primary" id="submitPhotoSelections" type="button">SUBMIT MY SELECTIONS ↗</button>
+          <button class="btn btn-outline" id="downloadSelectedPhotos" type="button">DOWNLOAD SELECTED PHOTOS ↓</button>
+          <button class="btn btn-outline" id="clientGalleryClose" type="button">CLOSE GALLERY</button>
+        </div>
+        <p class="portal-status" id="clientGalleryStatus" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <div class="portal-admin">
+      <div class="section-label">PHOTOGRAPHER ACCESS</div>
+      <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:30px">GALLERY ADMIN</h3>
+      <p class="section-description">Sign in with your Supabase admin account to create albums, upload photos, and review client selections.</p>
+      <form id="adminLoginForm" class="portal-admin-grid">
+        <div class="form-group"><label for="adminEmail">Admin email</label><input id="adminEmail" type="email" autocomplete="username" required placeholder="Your admin email"></div>
+        <div class="form-group"><label for="adminPassword">Password</label><input id="adminPassword" type="password" autocomplete="current-password" required placeholder="Your password"></div>
+        <div><button class="btn btn-primary" type="submit">ADMIN SIGN IN ↗</button></div>
+      </form>
+      <p class="portal-status" id="adminStatus" aria-live="polite"></p>
+      <div id="adminWorkspace" class="portal-hidden">
+        <div class="portal-actions">
+          <button class="btn btn-outline" id="adminSignOut" type="button">SIGN OUT</button>
+          <button class="btn btn-outline" id="refreshAdminData" type="button">REFRESH</button>
+        </div>
+        <div class="portal-admin-grid">
+          <form id="createAlbumForm">
+            <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:25px">CREATE A NEW ALBUM</h3>
+            <div class="form-group"><label for="newAlbumTitle">Person / team / event name</label><input id="newAlbumTitle" required maxlength="100" placeholder="e.g. Player — Fall 2026"></div>
+            <div class="form-group"><label for="newAlbumDescription">Description (optional)</label><input id="newAlbumDescription" maxlength="250" placeholder="Game, date, team, or notes"></div>
+            <button class="btn btn-primary" type="submit">CREATE ALBUM + ACCESS CODE</button>
+          </form>
+          <form id="uploadPhotosForm">
+            <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:25px">UPLOAD PHOTOS</h3>
+            <div class="form-group"><label for="uploadAlbumSelect">Choose album</label><select id="uploadAlbumSelect" required><option value="">Create an album first</option></select></div>
+            <div class="form-group"><label for="photoFiles">Choose multiple photos</label><input id="photoFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple required></div>
+            <button class="btn btn-primary" type="submit">UPLOAD PHOTOS</button>
+          </form>
+        </div>
+        <div style="margin-top:28px"><h3 style="font-family:'Barlow Condensed',sans-serif;font-size:25px">YOUR ALBUMS & ACCESS CODES</h3><div id="adminAlbumList"></div></div>
+        <div style="margin-top:28px"><h3 style="font-family:'Barlow Condensed',sans-serif;font-size:25px">CLIENT PHOTO SELECTIONS</h3><p class="portal-note">Instagram permission is recorded separately. Review permission and any applicable parent/guardian release before posting photos of minors.</p><div id="adminSubmissions"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- SUPPORT -->
 <section class="section support-section" id="support">
   <div class="container">
@@ -852,30 +947,6 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
 </section>
 </main>
 
-<!-- PRIVATE VIEWER COUNT AREA AT BOTTOM -->
-<section class="admin-section" id="private-viewer-area">
-  <div class="container">
-    <div class="admin-access">
-      <div>
-        <h3>Website Owner Access</h3>
-        <p>Private viewer statistics area. Enter your access code to continue.</p>
-      </div>
-      <form class="admin-form" id="adminForm">
-        <input type="password" id="adminCode" placeholder="Access code" inputmode="numeric" maxlength="12" aria-label="Owner access code">
-        <button class="btn btn-outline" type="submit">View Statistics</button>
-      </form>
-    </div>
-
-    <div class="admin-panel" id="adminPanel">
-      <h3>WEBSITE VIEWER COUNT</h3>
-      <div class="viewer-number" id="viewerNumber">—</div>
-      <p class="admin-status" id="viewerStatus">Loading viewer statistics...</p>
-      <button class="btn btn-outline" id="refreshViews" type="button">Refresh Count ↻</button>
-    </div>
-    <p class="admin-status" id="adminMessage" aria-live="polite"></p>
-  </div>
-</section>
-
 <!-- FOOTER -->
 <footer>
   <div class="container footer-content">
@@ -904,10 +975,6 @@ const WORKER_URL = "YOUR_CLOUDFLARE_WORKER_URL";
 const VIEWER_API_URL = "YOUR_VIEWER_COUNT_WORKER_URL";
 
 const CONTACT_NUMBER = "+19295039518";
-
-// The owner PIN is checked by this page for the basic demonstration.
-// For real privacy, validate it inside Cloudflare Worker instead.
-const OWNER_PIN = "030800";
 
 /* =========================================
    MOBILE NAVIGATION
@@ -1141,115 +1208,12 @@ document.getElementById("copyPaymentNumber").addEventListener("click", async () 
 });
 
 /* =========================================
-   VIEWER COUNT
-   ========================================= */
-
-// Local fallback: counts visits in this browser only.
-// For a true all-visitors count, connect a Worker API.
-// Suggested Worker API contract:
-// POST { "action": "view" } increments and returns { "views": 123 }
-// POST { "action": "stats", "code": "..." } checks the PIN server-side
-// and returns { "views": 123 } only when the PIN is valid.
-
-const LOCAL_VIEW_KEY = "flickz_local_view_count";
-const LOCAL_SESSION_KEY = "flickz_session_counted";
-
-function getLocalViewCount() {
-  return Number(localStorage.getItem(LOCAL_VIEW_KEY) || "0");
-}
-
-function addLocalView() {
-  if (sessionStorage.getItem(LOCAL_SESSION_KEY)) return;
-  const nextCount = getLocalViewCount() + 1;
-  localStorage.setItem(LOCAL_VIEW_KEY, String(nextCount));
-  sessionStorage.setItem(LOCAL_SESSION_KEY, "yes");
-}
-
-addLocalView();
-
-async function recordWebsiteView() {
-  if (!VIEWER_API_URL || VIEWER_API_URL === "YOUR_VIEWER_COUNT_WORKER_URL") return;
-
-  try {
-    await fetch(VIEWER_API_URL, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({action:"view"})
-    });
-  } catch (error) {
-    console.warn("Could not record website view.");
-  }
-}
-
-recordWebsiteView();
-
-const adminForm = document.getElementById("adminForm");
-const adminCode = document.getElementById("adminCode");
-const adminPanel = document.getElementById("adminPanel");
-const adminMessage = document.getElementById("adminMessage");
-const viewerNumber = document.getElementById("viewerNumber");
-const viewerStatus = document.getElementById("viewerStatus");
-const refreshViews = document.getElementById("refreshViews");
-
-let ownerUnlocked = false;
-
-async function loadViewerStats(code) {
-  viewerStatus.textContent = "Loading viewer statistics...";
-  viewerNumber.textContent = "—";
-
-  if (!VIEWER_API_URL || VIEWER_API_URL === "YOUR_VIEWER_COUNT_WORKER_URL") {
-    viewerNumber.textContent = getLocalViewCount().toLocaleString();
-    viewerStatus.textContent =
-      "Local browser count only. Connect your Cloudflare viewer-count Worker to see the real total across all website visitors.";
-    return;
-  }
-
-  try {
-    const response = await fetch(VIEWER_API_URL, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({action:"stats",code:code})
-    });
-
-    if (!response.ok) throw new Error("Could not retrieve statistics.");
-
-    const data = await response.json();
-    if (typeof data.views !== "number") throw new Error("Invalid viewer-count response.");
-
-    viewerNumber.textContent = data.views.toLocaleString();
-    viewerStatus.textContent = "Total website views reported by your connected Worker.";
-
-  } catch (error) {
-    viewerNumber.textContent = "—";
-    viewerStatus.textContent = "Unable to load global statistics. Check your Worker setup.";
-  }
-}
-
-adminForm.addEventListener("submit", async event => {
-  event.preventDefault();
-
-  if (adminCode.value !== OWNER_PIN) {
-    adminMessage.textContent = "Incorrect access code.";
-    adminPanel.classList.remove("open");
-    ownerUnlocked = false;
-    return;
-  }
-
-  ownerUnlocked = true;
-  adminMessage.textContent = "";
-  adminPanel.classList.add("open");
-  await loadViewerStats(adminCode.value);
-});
-
-refreshViews.addEventListener("click", async () => {
-  if (!ownerUnlocked) return;
-  await loadViewerStats(adminCode.value);
-});
-
-/* =========================================
    FOOTER YEAR
    ========================================= */
 document.getElementById("year").textContent = new Date().getFullYear();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="client-gallery.js" defer></script>
+
 </body>
 </html>
