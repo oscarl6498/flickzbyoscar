@@ -476,6 +476,41 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
 .admin-album-row small{display:block;color:var(--muted);margin-top:5px}
 .portal-note{color:var(--muted);font-size:12px;line-height:1.7;margin-top:12px}
 @media(max-width:700px){.portal-admin-grid{grid-template-columns:1fr}.client-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.portal-form{flex-direction:column}.portal-form button{width:100%}}
+
+/* PUBLIC PORTFOLIO MANAGER */
+.public-portfolio-manager{margin-top:36px;padding-top:28px;border-top:1px solid var(--line)}
+.public-manager-heading h3,.public-manager-list-wrap h4,.public-manager-card h4{font-family:'Barlow Condensed',sans-serif;font-size:25px;color:#f4f7fb;margin:5px 0 8px}
+.public-manager-forms{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.public-manager-card{background:#070d16;border:1px solid var(--line);border-radius:7px;padding:18px}
+.public-manager-card h4{font-size:21px;margin:0 0 14px}
+.public-manager-card .form-group{margin-bottom:12px}
+.public-manager-card input,.public-manager-card select{width:100%;padding:12px;background:#070c13;border:1px solid var(--line);color:white;border-radius:5px}
+.public-manager-card input[type=file]{font-size:12px}
+.public-manager-list-wrap{margin-top:28px}
+.public-album-admin-card{background:#080e17;border:1px solid var(--line);border-radius:8px;padding:16px;margin-top:12px}
+.public-album-admin-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.public-album-admin-head strong{font-family:'Barlow Condensed',sans-serif;font-size:22px}
+.public-album-admin-meta{font-size:11px;color:var(--muted);margin-top:3px}
+.public-album-admin-edit{display:grid;grid-template-columns:1.3fr 1.3fr .85fr .45fr;gap:10px;align-items:end}
+.public-album-admin-edit label{display:block;font-size:10px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.public-album-admin-edit input,.public-album-admin-edit select{width:100%;min-width:0;padding:10px;background:#060b12;border:1px solid var(--line);border-radius:4px;color:#fff;font-size:12px}
+.public-album-active{display:flex!important;align-items:center;gap:7px;white-space:nowrap;padding:10px 0;color:#d7e0ec!important}
+.public-album-active input{width:auto!important;accent-color:var(--blue)}
+.public-album-admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.public-album-admin-actions .btn,.public-photo-admin .btn{padding:9px 12px;font-size:10px}
+.public-album-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:10px;margin-top:16px}
+.public-photo-admin{border:1px solid var(--line);border-radius:5px;overflow:hidden;background:#050a11;min-width:0}
+.public-photo-admin img{width:100%;height:92px;display:block;object-fit:cover}
+.public-photo-admin-info{padding:8px}
+.public-photo-admin-info span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:7px}
+.public-photo-admin-actions{display:flex;gap:5px;flex-wrap:wrap}
+.public-photo-admin-actions .btn{flex:1;min-width:0}
+.public-album-empty{padding:14px;border:1px dashed var(--line);color:var(--muted);font-size:12px;text-align:center;margin-top:12px}
+.public-admin-danger{border-color:#7c3434!important;color:#ffb3b3!important}
+.public-consent-note{margin-top:20px}
+@media(max-width:900px){.public-manager-forms{grid-template-columns:1fr}.public-album-admin-edit{grid-template-columns:1fr 1fr}.public-album-admin-edit .public-album-active{grid-column:1/-1}}
+@media(max-width:560px){.public-album-admin-edit{grid-template-columns:1fr}.public-album-admin-actions .btn{flex:1}}
+
 </style>
 </head>
 
@@ -565,6 +600,7 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
       <button class="filter-btn active" data-filter="all">All Photos</button>
       <button class="filter-btn" data-filter="football">Football</button>
       <button class="filter-btn" data-filter="basketball">Basketball</button>
+      <button class="filter-btn" data-filter="other">Other</button>
     </div>
     <p id="publicGalleryStatus" class="portal-note" aria-live="polite">Loading public event albums...</p>
 
@@ -891,6 +927,55 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
         </div>
         <div style="margin-top:28px"><h3 style="font-family:'Barlow Condensed',sans-serif;font-size:25px">YOUR ALBUMS & ACCESS CODES</h3><div id="adminAlbumList"></div></div>
         <div style="margin-top:28px"><h3 style="font-family:'Barlow Condensed',sans-serif;font-size:25px">CLIENT PHOTO SELECTIONS</h3><p class="portal-note">Instagram permission is recorded separately. Review permission and any applicable parent/guardian release before posting photos of minors.</p><div id="adminSubmissions"></div></div>
+
+        <div class="public-portfolio-manager" id="publicPortfolioManager">
+          <div class="public-manager-heading">
+            <div class="section-label">PUBLIC WEBSITE GALLERY</div>
+            <h3>PUBLIC PORTFOLIO MANAGER</h3>
+            <p class="portal-note">Create and organize public Football, Basketball, and Other albums. Photos added here appear in the website's public Sports Gallery.</p>
+          </div>
+          <div class="public-manager-forms">
+            <form id="createPublicAlbumForm" class="public-manager-card">
+              <h4>CREATE A PUBLIC ALBUM</h4>
+              <div class="form-group">
+                <label for="publicAlbumTitle">Album name</label>
+                <input id="publicAlbumTitle" type="text" maxlength="100" required placeholder="e.g. Spring Championship">
+              </div>
+              <div class="form-group">
+                <label for="publicAlbumDescription">Description</label>
+                <input id="publicAlbumDescription" type="text" maxlength="250" placeholder="Event, date, team, or notes">
+              </div>
+              <div class="form-group">
+                <label for="publicAlbumCategory">Sport / category</label>
+                <select id="publicAlbumCategory" required>
+                  <option value="football">Football</option>
+                  <option value="basketball">Basketball</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" type="submit">CREATE PUBLIC ALBUM +</button>
+            </form>
+            <form id="uploadPublicPhotosForm" class="public-manager-card">
+              <h4>ADD PHOTOS TO AN ALBUM</h4>
+              <div class="form-group">
+                <label for="publicUploadAlbum">Choose public album</label>
+                <select id="publicUploadAlbum" required><option value="">Create an album first</option></select>
+              </div>
+              <div class="form-group">
+                <label for="publicPhotoFiles">Choose multiple photos</label>
+                <input id="publicPhotoFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple required>
+              </div>
+              <button class="btn btn-primary" type="submit">UPLOAD PUBLIC PHOTOS</button>
+              <p class="portal-note">JPG, PNG, or WebP · Maximum 20 MB per image.</p>
+            </form>
+          </div>
+          <div class="public-manager-list-wrap">
+            <h4>MANAGE YOUR PUBLIC ALBUMS</h4>
+            <div id="publicAlbumManagerList"><p class="portal-note">Loading your albums...</p></div>
+          </div>
+          <p class="portal-status" id="publicPortfolioAdminStatus" aria-live="polite"></p>
+          <p class="portal-note public-consent-note">Public album photos can be seen by anyone. Only publish photos you have permission to share, especially identifiable photos of minors.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -1228,7 +1313,7 @@ document.getElementById("copyPaymentNumber").addEventListener("click", async () 
 document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="client-gallery.js" defer></script>
+<script src="client-gallery.js?v=public-manager-20261111" defer></script>
 
 </body>
 </html>
