@@ -1,2 +1,5 @@
 [functions.flickz-gallery]
 verify_jwt = false
+
+[functions.preset-checkout]
+verify_jwt = false
