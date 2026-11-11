@@ -769,6 +769,7 @@
     if (albumError) throw albumError;
     albums = albumRows || []; renderAlbums();
     await refreshPublicPortfolioAdmin();
+    await refreshPresetAssetManager();
     const { data: submissions, error: submissionsError } = await sb.from("flickz_selections").select("id,album_id,photo_ids,instagram_consent,instagram_approved,created_at").order("created_at", { ascending: false }).limit(100);
     if (submissionsError) throw submissionsError;
     const selectionIds = (submissions || []).map(item => item.id);
