@@ -127,7 +127,10 @@ async function handleWebhook(req: Request) {
 
   if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
     const session = event.data.object as Stripe.Checkout.Session;
-    if (session.payment_status === "paid") {
+    // Stripe's dashboard can send generic sample events without our product metadata.
+    // A real checkout created by this function always carries a known product_key.
+    // Acknowledge generic samples without recording a sale; real paid product sessions are recorded.
+    if (session.payment_status === "paid" && isProductKey(session.metadata?.product_key)) {
       try {
         await recordPaidOrder(session);
       } catch (error) {
