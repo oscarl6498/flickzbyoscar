@@ -271,7 +271,6 @@
     const { data: albumRows, error: albumError } = await sb.from("flickz_albums").select("id,title,description,access_code,is_active,created_at").order("created_at", { ascending: false });
     if (albumError) throw albumError;
     albums = albumRows || []; renderAlbums();
-    await refreshPresetAssetManager();
     await refreshPublicPortfolioAdmin();
     await refreshPresetAssetManager();
     const { data: submissions, error: submissionsError } = await sb.from("flickz_selections").select("id,album_id,photo_ids,instagram_consent,instagram_approved,created_at").order("created_at", { ascending: false }).limit(100);
