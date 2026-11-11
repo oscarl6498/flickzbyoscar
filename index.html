@@ -487,6 +487,25 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
 @media(max-width:850px){.preset-products{grid-template-columns:repeat(2,minmax(0,1fr))}.preset-shop-heading{align-items:start;flex-direction:column}}
 @media(max-width:560px){.preset-products{grid-template-columns:1fr}.preset-product-art{height:190px}}
 
+
+/* PRESET FILE & SALES MANAGER */
+.preset-delivery-manager,.preset-sales-manager{margin-top:30px;padding-top:25px;border-top:1px solid var(--line)}
+.preset-delivery-manager h4,.preset-sales-manager h4{font-family:"Barlow Condensed",sans-serif;font-size:24px;margin:6px 0}
+.preset-asset-grid{display:grid;gap:11px;margin-top:16px}
+.preset-asset-row{display:grid;grid-template-columns:1.2fr 1fr auto;gap:12px;align-items:center;background:#080e17;border:1px solid var(--line);padding:13px;border-radius:6px}
+.preset-asset-row strong,.preset-asset-row small,.preset-asset-state{display:block}
+.preset-asset-row strong{font-family:"Barlow Condensed",sans-serif;font-size:18px}
+.preset-asset-row small{font-size:11px;color:var(--muted);margin-top:2px}
+.preset-asset-state{font-size:10px;color:var(--blue2);margin-top:5px}
+.preset-asset-row input{max-width:100%;font-size:11px;color:var(--muted)}
+.preset-asset-row .btn{font-size:10px;padding:10px 12px}
+.preset-sale-row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border:1px solid var(--line);border-radius:5px;padding:12px;margin-top:9px;font-size:12px}
+.preset-sale-row small{display:block;color:var(--muted);margin-top:4px}
+.preset-product-footer .preset-buy-button:disabled{opacity:.55;cursor:not-allowed}
+.preset-shop-footnote{max-width:700px;margin-left:auto;margin-right:auto}
+.preset-button-message{min-height:18px;margin-top:9px;color:var(--blue2);font-size:11px;line-height:1.5}
+@media(max-width:760px){.preset-asset-row{grid-template-columns:1fr}.preset-asset-row input{width:100%}.preset-asset-row .btn{width:100%}}
+
 </style>
 
 <style>
@@ -841,7 +860,7 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
         <h2 class="section-title">PRESET <span>SHOP.</span></h2>
         <p class="section-description">Bring your edits closer to the FLICKZ BY OSCAR look. Preset packs are on the way.</p>
       </div>
-      <div class="preset-shop-note">DIGITAL PRESETS<br><span>COMING SOON</span></div>
+      <div class="preset-shop-note">SECURE CHECKOUT<br><span>POWERED BY STRIPE</span></div>
     </div>
 
     <div class="preset-products">
@@ -854,7 +873,7 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
           <h3>Flicks Sports Preset Pack</h3>
           <p>Product details and sample edits will be added soon.</p>
           <div class="preset-price">$15 <small>USD</small></div>
-          <div class="preset-product-footer"><span>AVAILABLE SOON</span><button class="btn btn-primary preset-buy-button" type="button" data-preset-name="Flicks Sports Preset Pack" data-preset-price="15">BUY NOW</button></div>
+          <div class="preset-product-footer"><span>AVAILABLE SOON</span><button class="btn btn-primary preset-buy-button" type="button" data-product-key="flicks-sports-preset-pack">BUY NOW</button></div>
           <p class="preset-button-message" aria-live="polite"></p>
         </div>
       </article>
@@ -867,7 +886,7 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
           <h3>Flicks Ultimate Preset Pack</h3>
           <p>Product details and sample edits will be added soon.</p>
           <div class="preset-price">$30 <small>USD</small></div>
-          <div class="preset-product-footer"><span>AVAILABLE SOON</span><button class="btn btn-primary preset-buy-button" type="button" data-preset-name="Flicks Ultimate Preset Pack" data-preset-price="30">BUY NOW</button></div>
+          <div class="preset-product-footer"><span>AVAILABLE SOON</span><button class="btn btn-primary preset-buy-button" type="button" data-product-key="flicks-ultimate-preset-pack">BUY NOW</button></div>
           <p class="preset-button-message" aria-live="polite"></p>
         </div>
       </article>
@@ -880,12 +899,12 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
           <h3>Flicks Ultimate Preset Bundle</h3>
           <p>Product details and sample edits will be added soon.</p>
           <div class="preset-price">$50 <small>USD</small></div>
-          <div class="preset-product-footer"><span>AVAILABLE SOON</span><button class="btn btn-primary preset-buy-button" type="button" data-preset-name="Flicks Ultimate Preset Bundle" data-preset-price="50">BUY NOW</button></div>
+          <div class="preset-product-footer"><span>AVAILABLE SOON</span><button class="btn btn-primary preset-buy-button" type="button" data-product-key="flicks-ultimate-preset-bundle">BUY NOW</button></div>
           <p class="preset-button-message" aria-live="polite"></p>
         </div>
       </article>
     </div>
-    <p class="preset-shop-footnote">Prices are displayed for preview. The Buy Now buttons are previews for now. Checkout and digital delivery will be connected when the preset packs are ready.</p>
+    <p class="preset-shop-footnote">Prices are displayed for preview. Secure checkout opens on Stripe. Digital downloads are delivered after successful payment. Preset files must be uploaded before their Buy Now buttons activate.</p>
   </div>
 </section>
 
@@ -1075,6 +1094,34 @@ footer{padding:30px 0;border-top:1px solid var(--line);background:#030507}
           </div>
           <p class="portal-status" id="publicPortfolioAdminStatus" aria-live="polite"></p>
           <p class="portal-note public-consent-note">Public album photos can be seen by anyone. Only publish photos you have permission to share, especially identifiable photos of minors.</p>
+        </div>
+        <div class="preset-delivery-manager" id="presetDeliveryManager">
+          <div class="section-label">DIGITAL PRODUCT DELIVERY</div>
+          <h4>UPLOAD YOUR PRESET PACKS</h4>
+          <p class="portal-note">Upload one ZIP for each product. A Buy Now button becomes active only after its download file is safely stored.</p>
+          <div class="preset-asset-grid">
+            <div class="preset-asset-row">
+              <div><strong>Flicks Sports Preset Pack</strong><small>$15 USD</small><span class="preset-asset-state" id="presetAssetStateSports">Checking file...</span></div>
+              <input id="presetAssetSports" type="file" accept=".zip,application/zip">
+              <button class="btn btn-outline" type="button" data-preset-upload="flicks-sports-preset-pack" data-file-input="presetAssetSports">UPLOAD ZIP</button>
+            </div>
+            <div class="preset-asset-row">
+              <div><strong>Flicks Ultimate Preset Pack</strong><small>$30 USD</small><span class="preset-asset-state" id="presetAssetStateUltimate">Checking file...</span></div>
+              <input id="presetAssetUltimate" type="file" accept=".zip,application/zip">
+              <button class="btn btn-outline" type="button" data-preset-upload="flicks-ultimate-preset-pack" data-file-input="presetAssetUltimate">UPLOAD ZIP</button>
+            </div>
+            <div class="preset-asset-row">
+              <div><strong>Flicks Ultimate Preset Bundle</strong><small>$50 USD</small><span class="preset-asset-state" id="presetAssetStateBundle">Checking file...</span></div>
+              <input id="presetAssetBundle" type="file" accept=".zip,application/zip">
+              <button class="btn btn-outline" type="button" data-preset-upload="flicks-ultimate-preset-bundle" data-file-input="presetAssetBundle">UPLOAD ZIP</button>
+            </div>
+          </div>
+          <p class="portal-status" id="presetAssetStatus" aria-live="polite"></p>
+        </div>
+        <div class="preset-sales-manager" id="presetSalesManager">
+          <div class="section-label">STORE ORDERS</div>
+          <h4>RECENT PRESET SALES</h4>
+          <div id="presetSalesList"><p class="portal-note">No preset sales recorded yet.</p></div>
         </div>
       </div>
     </div>
@@ -1449,7 +1496,8 @@ document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-<script src="client-gallery.js?v=view-more-preset-shop-20261111" defer></script>
+<script src="client-gallery.js?v=stripe-checkout-20261111" defer></script>
+<script src="preset-store.js?v=20261111" defer></script>
 
 </body>
 </html>
