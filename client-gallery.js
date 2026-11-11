@@ -275,9 +275,12 @@
 
   // Public portfolio manager — authenticated owner controls albums and images.
   async function refreshPublicPortfolioAdmin() {
+    const { data: userResult, error: userError } = await sb.auth.getUser();
+    if (userError || !userResult.user) throw new Error("Please sign in again to manage public albums.");
     const { data: albumsData, error: albumsError } = await sb
       .from("flickz_public_albums")
       .select("id,title,description,category,is_active,sort_order,created_at")
+      .eq("owner_id", userResult.user.id)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });
     if (albumsError) throw albumsError;
@@ -412,8 +415,10 @@
         const photos = publicPortfolioPhotos.filter(photo => photo.album_id === album.id);
         const paths = photos.map(photo => photo.storage_path);
         if (paths.length) {
-          const { error: storageError } = await sb.storage.from(PUBLIC_PORTFOLIO_BUCKET).remove(paths);
-          if (storageError) throw storageError;
+          for (let offset = 0; offset < paths.length; offset += 100) {
+            const { error: storageError } = await sb.storage.from(PUBLIC_PORTFOLIO_BUCKET).remove(paths.slice(offset, offset + 100));
+            if (storageError) throw storageError;
+          }
         }
         const { error } = await sb.from("flickz_public_albums").delete().eq("id", album.id);
         if (error) throw error;
