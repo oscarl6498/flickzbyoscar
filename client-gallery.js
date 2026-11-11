@@ -50,10 +50,8 @@
   // Public portfolio albums live in a separate PUBLIC bucket.
   // This is intentionally separate from the private client-delivery bucket above.
   const PUBLIC_PORTFOLIO_BUCKET = "flickz-public-gallery";
-  const PUBLIC_PORTFOLIO_ALBUMS = [
-    { folder: "football-next-level", category: "football", label: "Next Level", title: "Next Level" },
-    { folder: "basketball-holy-child-a-tournament", category: "basketball", label: "Holy Child A Tournament", title: "Holy Child A Tournament" }
-  ];
+  let publicPortfolioAlbums = [];
+  let publicPortfolioPhotos = [];
 
   async function loadPublicPortfolioAlbums() {
     const grid = el("galleryGrid");
@@ -66,70 +64,66 @@
     if (statusEl) statusEl.textContent = "Loading public event albums...";
     grid.querySelectorAll('[data-public-album="true"]').forEach(card => card.remove());
 
+    const { data: albumsData, error: albumsError } = await sb
+      .from("flickz_public_albums")
+      .select("id,title,description,category,sort_order")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true });
+
+    if (albumsError) throw albumsError;
+    const albums = albumsData || [];
+    const albumIds = albums.map(album => album.id);
+    let photos = [];
+    if (albumIds.length) {
+      const { data, error } = await sb
+        .from("flickz_public_photos")
+        .select("id,album_id,file_name,storage_path,sort_order")
+        .in("album_id", albumIds)
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      photos = data || [];
+    }
+
+    const photosByAlbum = new Map();
+    photos.forEach(photo => {
+      if (!photosByAlbum.has(photo.album_id)) photosByAlbum.set(photo.album_id, []);
+      photosByAlbum.get(photo.album_id).push(photo);
+    });
+
     let totalLoaded = 0;
-    const albumCounts = [];
-    for (const album of PUBLIC_PORTFOLIO_ALBUMS) {
-      const { data: files, error } = await sb.storage
-        .from(PUBLIC_PORTFOLIO_BUCKET)
-        .list(album.folder, {
-          limit: 200,
-          offset: 0,
-          sortBy: { column: "name", order: "asc" }
-        });
-
-      if (error) {
-        console.warn("Could not list public album:", album.folder, error.message);
-        continue;
-      }
-
-      const images = (files || []).filter(file =>
-        file.name &&
-        file.name !== ".emptyFolderPlaceholder" &&
-        file.metadata &&
-        (!file.metadata.mimetype || String(file.metadata.mimetype).startsWith("image/"))
-      );
-
-      for (const file of images) {
-        const path = album.folder + "/" + file.name;
-        const { data } = sb.storage.from(PUBLIC_PORTFOLIO_BUCKET).getPublicUrl(path);
+    for (const album of albums) {
+      const albumPhotos = photosByAlbum.get(album.id) || [];
+      for (const photo of albumPhotos) {
+        const { data } = sb.storage.from(PUBLIC_PORTFOLIO_BUCKET).getPublicUrl(photo.storage_path);
         if (!data?.publicUrl) continue;
 
         const card = document.createElement("div");
         card.className = "photo-card reveal";
         card.dataset.category = album.category;
-        card.dataset.title = album.title + " — " + file.name;
+        card.dataset.title = album.title + " — " + photo.file_name;
         card.dataset.publicAlbum = "true";
         card.innerHTML = `
           <img src="${safe(data.publicUrl)}" alt="${safe("FLICKZ BY OSCAR " + album.title + " photograph")}" loading="lazy" decoding="async">
           <div class="photo-overlay">
-            <small>${safe(album.label)}</small>
-            <h3>${safe(album.title)}</h3>
+            <small>${safe(album.title)}</small>
+            <h3>${safe(photo.file_name)}</h3>
             <span class="view-label">VIEW PHOTO ↗</span>
           </div>`;
         grid.appendChild(card);
         totalLoaded++;
       }
-      albumCounts.push(album.label + ": " + images.length);
     }
 
     if (typeof window.refreshPortfolioGallery === "function") window.refreshPortfolioGallery();
-    grid.querySelectorAll(".photo-card.reveal:not(.visible)").forEach(card => {
-      if (window.IntersectionObserver) {
-        // The site's existing reveal observer won't see elements added after page load,
-        // so make new album cards visible immediately and keep their lazy-loaded images.
-        card.classList.add("visible");
-      } else {
-        card.classList.add("visible");
-      }
-    });
-
+    grid.querySelectorAll('[data-public-album="true"].reveal:not(.visible)').forEach(card => card.classList.add("visible"));
     if (statusEl) {
       statusEl.textContent = totalLoaded
-        ? "Public event albums loaded — " + albumCounts.join(" · ") + "."
-        : "No public event photos have been uploaded yet. Add the photos to the matching folders in Supabase Storage.";
+        ? "Public albums loaded — " + albums.length + " album(s), " + totalLoaded + " photo(s)."
+        : "No public album photos yet. Create an album and upload photos in Gallery Admin.";
     }
   }
-
   loadPublicPortfolioAlbums().catch(error => {
     console.error("Public portfolio loading failed:", error);
     status("publicGalleryStatus", "Public event albums could not be loaded. Please check the public gallery bucket setup.");
@@ -245,6 +239,7 @@
     const { data: albumRows, error: albumError } = await sb.from("flickz_albums").select("id,title,description,access_code,is_active,created_at").order("created_at", { ascending: false });
     if (albumError) throw albumError;
     albums = albumRows || []; renderAlbums();
+    await refreshPublicPortfolioAdmin();
     const { data: submissions, error: submissionsError } = await sb.from("flickz_selections").select("id,album_id,photo_ids,instagram_consent,instagram_approved,created_at").order("created_at", { ascending: false }).limit(100);
     if (submissionsError) throw submissionsError;
     const selectionIds = (submissions || []).map(item => item.id);
@@ -276,6 +271,282 @@
       }
     }));
   }
+
+
+  // Public portfolio manager — authenticated owner controls albums and images.
+  async function refreshPublicPortfolioAdmin() {
+    const { data: albumsData, error: albumsError } = await sb
+      .from("flickz_public_albums")
+      .select("id,title,description,category,is_active,sort_order,created_at")
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true });
+    if (albumsError) throw albumsError;
+    publicPortfolioAlbums = albumsData || [];
+
+    const albumIds = publicPortfolioAlbums.map(album => album.id);
+    if (albumIds.length) {
+      const { data, error } = await sb
+        .from("flickz_public_photos")
+        .select("id,album_id,file_name,storage_path,sort_order,created_at")
+        .in("album_id", albumIds)
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      publicPortfolioPhotos = data || [];
+    } else {
+      publicPortfolioPhotos = [];
+    }
+    renderPublicPortfolioAdmin();
+  }
+
+  function renderPublicPortfolioAdmin() {
+    const albumSelect = el("publicUploadAlbum");
+    const list = el("publicAlbumManagerList");
+    if (!albumSelect || !list) return;
+
+    const previousSelection = albumSelect.value;
+    albumSelect.innerHTML = '<option value="">Choose a public album</option>' +
+      publicPortfolioAlbums.map(album => '<option value="' + safe(album.id) + '">' +
+        safe(album.title) + ' · ' + safe(album.category) + '</option>').join("");
+    if (publicPortfolioAlbums.some(album => album.id === previousSelection)) albumSelect.value = previousSelection;
+
+    if (!publicPortfolioAlbums.length) {
+      list.innerHTML = '<div class="public-album-empty">No public albums yet. Create your first album above.</div>';
+      return;
+    }
+
+    list.innerHTML = publicPortfolioAlbums.map((album, index) => {
+      const photos = publicPortfolioPhotos.filter(photo => photo.album_id === album.id);
+      const photoCards = photos.map((photo, photoIndex) => {
+        const { data } = sb.storage.from(PUBLIC_PORTFOLIO_BUCKET).getPublicUrl(photo.storage_path);
+        const url = data?.publicUrl || "";
+        return `
+          <div class="public-photo-admin">
+            <img src="${safe(url)}" alt="${safe(photo.file_name)}" loading="lazy">
+            <div class="public-photo-admin-info">
+              <span title="${safe(photo.file_name)}">${safe(photo.file_name)}</span>
+              <div class="public-photo-admin-actions">
+                <button class="btn btn-outline" type="button" data-photo-move="up" data-photo-id="${safe(photo.id)}" ${photoIndex === 0 ? "disabled" : ""} aria-label="Move photo up">↑</button>
+                <button class="btn btn-outline" type="button" data-photo-move="down" data-photo-id="${safe(photo.id)}" ${photoIndex === photos.length - 1 ? "disabled" : ""} aria-label="Move photo down">↓</button>
+                <button class="btn btn-outline public-admin-danger" type="button" data-photo-delete="${safe(photo.id)}">DELETE</button>
+              </div>
+            </div>
+          </div>`;
+      }).join("");
+
+      return `
+        <article class="public-album-admin-card" data-public-album-id="${safe(album.id)}">
+          <div class="public-album-admin-head">
+            <div>
+              <strong>${safe(album.title)}</strong>
+              <div class="public-album-admin-meta">${safe(album.category.toUpperCase())} · ${photos.length} photo(s) · ${album.is_active ? "VISIBLE ON WEBSITE" : "HIDDEN FROM WEBSITE"}</div>
+            </div>
+            <div class="public-album-admin-actions">
+              <button class="btn btn-outline" type="button" data-album-move="up" data-album-id="${safe(album.id)}" ${index === 0 ? "disabled" : ""}>MOVE UP ↑</button>
+              <button class="btn btn-outline" type="button" data-album-move="down" data-album-id="${safe(album.id)}" ${index === publicPortfolioAlbums.length - 1 ? "disabled" : ""}>MOVE DOWN ↓</button>
+            </div>
+          </div>
+          <div class="public-album-admin-edit">
+            <div><label>ALBUM NAME</label><input class="edit-public-title" type="text" maxlength="100" value="${safe(album.title)}"></div>
+            <div><label>DESCRIPTION</label><input class="edit-public-description" type="text" maxlength="250" value="${safe(album.description || "")}"></div>
+            <div><label>CATEGORY</label><select class="edit-public-category">
+              <option value="football" ${album.category === "football" ? "selected" : ""}>Football</option>
+              <option value="basketball" ${album.category === "basketball" ? "selected" : ""}>Basketball</option>
+              <option value="other" ${album.category === "other" ? "selected" : ""}>Other</option>
+            </select></div>
+            <label class="public-album-active"><input class="edit-public-active" type="checkbox" ${album.is_active ? "checked" : ""}> SHOW ON SITE</label>
+          </div>
+          <div class="public-album-admin-actions">
+            <button class="btn btn-primary" type="button" data-album-save="${safe(album.id)}">SAVE ALBUM</button>
+            <button class="btn btn-outline public-admin-danger" type="button" data-album-delete="${safe(album.id)}">DELETE ALBUM</button>
+          </div>
+          <div class="public-album-photo-grid">${photoCards || '<div class="public-album-empty">No photos yet. Use “Add Photos to an Album” above.</div>'}</div>
+        </article>`;
+    }).join("");
+
+    list.querySelectorAll("[data-album-save]").forEach(button => button.addEventListener("click", async () => {
+      const card = button.closest("[data-public-album-id]");
+      const albumId = button.dataset.albumSave;
+      const title = card.querySelector(".edit-public-title").value.trim();
+      if (!title) return status("publicPortfolioAdminStatus", "Album name cannot be blank.");
+      button.disabled = true;
+      try {
+        const { error } = await sb.from("flickz_public_albums").update({
+          title,
+          description: card.querySelector(".edit-public-description").value.trim(),
+          category: card.querySelector(".edit-public-category").value,
+          is_active: card.querySelector(".edit-public-active").checked
+        }).eq("id", albumId);
+        if (error) throw error;
+        await refreshPublicPortfolioAdmin();
+        await loadPublicPortfolioAlbums();
+        status("publicPortfolioAdminStatus", "Album saved. The public gallery has been refreshed.");
+      } catch (error) {
+        status("publicPortfolioAdminStatus", error.message || "Could not save this album.");
+        button.disabled = false;
+      }
+    }));
+
+    list.querySelectorAll("[data-album-move]").forEach(button => button.addEventListener("click", async () => {
+      const index = publicPortfolioAlbums.findIndex(album => album.id === button.dataset.albumId);
+      const otherIndex = button.dataset.albumMove === "up" ? index - 1 : index + 1;
+      if (index < 0 || otherIndex < 0 || otherIndex >= publicPortfolioAlbums.length) return;
+      const first = publicPortfolioAlbums[index], second = publicPortfolioAlbums[otherIndex];
+      try {
+        const firstOrder = second.sort_order, secondOrder = first.sort_order;
+        const a = await sb.from("flickz_public_albums").update({ sort_order: firstOrder }).eq("id", first.id);
+        if (a.error) throw a.error;
+        const b = await sb.from("flickz_public_albums").update({ sort_order: secondOrder }).eq("id", second.id);
+        if (b.error) throw b.error;
+        await refreshPublicPortfolioAdmin();
+        await loadPublicPortfolioAlbums();
+        status("publicPortfolioAdminStatus", "Album order updated.");
+      } catch (error) { status("publicPortfolioAdminStatus", error.message || "Could not reorder albums."); }
+    }));
+
+    list.querySelectorAll("[data-album-delete]").forEach(button => button.addEventListener("click", async () => {
+      const album = publicPortfolioAlbums.find(item => item.id === button.dataset.albumDelete);
+      if (!album || !confirm('Delete the public album "' + album.title + '" and all of its photos? This cannot be undone.')) return;
+      button.disabled = true;
+      try {
+        const photos = publicPortfolioPhotos.filter(photo => photo.album_id === album.id);
+        const paths = photos.map(photo => photo.storage_path);
+        if (paths.length) {
+          const { error: storageError } = await sb.storage.from(PUBLIC_PORTFOLIO_BUCKET).remove(paths);
+          if (storageError) throw storageError;
+        }
+        const { error } = await sb.from("flickz_public_albums").delete().eq("id", album.id);
+        if (error) throw error;
+        await refreshPublicPortfolioAdmin();
+        await loadPublicPortfolioAlbums();
+        status("publicPortfolioAdminStatus", "Album and its photos deleted.");
+      } catch (error) {
+        status("publicPortfolioAdminStatus", error.message || "Could not delete this album.");
+        button.disabled = false;
+      }
+    }));
+
+    list.querySelectorAll("[data-photo-delete]").forEach(button => button.addEventListener("click", async () => {
+      const photo = publicPortfolioPhotos.find(item => item.id === button.dataset.photoDelete);
+      if (!photo || !confirm('Delete "' + photo.file_name + '" from this public album?')) return;
+      button.disabled = true;
+      try {
+        const { error: storageError } = await sb.storage.from(PUBLIC_PORTFOLIO_BUCKET).remove([photo.storage_path]);
+        if (storageError) throw storageError;
+        const { error } = await sb.from("flickz_public_photos").delete().eq("id", photo.id);
+        if (error) throw error;
+        await refreshPublicPortfolioAdmin();
+        await loadPublicPortfolioAlbums();
+        status("publicPortfolioAdminStatus", "Photo deleted from the public album.");
+      } catch (error) {
+        status("publicPortfolioAdminStatus", error.message || "Could not delete this photo.");
+        button.disabled = false;
+      }
+    }));
+
+    list.querySelectorAll("[data-photo-move]").forEach(button => button.addEventListener("click", async () => {
+      const photo = publicPortfolioPhotos.find(item => item.id === button.dataset.photoId);
+      if (!photo) return;
+      const ordered = publicPortfolioPhotos.filter(item => item.album_id === photo.album_id);
+      const index = ordered.findIndex(item => item.id === photo.id);
+      const otherIndex = button.dataset.photoMove === "up" ? index - 1 : index + 1;
+      if (otherIndex < 0 || otherIndex >= ordered.length) return;
+      const other = ordered[otherIndex];
+      try {
+        const a = await sb.from("flickz_public_photos").update({ sort_order: other.sort_order }).eq("id", photo.id);
+        if (a.error) throw a.error;
+        const b = await sb.from("flickz_public_photos").update({ sort_order: photo.sort_order }).eq("id", other.id);
+        if (b.error) throw b.error;
+        await refreshPublicPortfolioAdmin();
+        await loadPublicPortfolioAlbums();
+        status("publicPortfolioAdminStatus", "Photo order updated.");
+      } catch (error) { status("publicPortfolioAdminStatus", error.message || "Could not reorder photos."); }
+    }));
+  }
+
+  el("createPublicAlbumForm")?.addEventListener("submit", async event => {
+    event.preventDefault();
+    const button = event.currentTarget.querySelector('button[type="submit"]');
+    button.disabled = true;
+    try {
+      const { data: userResult, error: userError } = await sb.auth.getUser();
+      if (userError || !userResult.user) throw new Error("Please sign in again.");
+      const nextOrder = publicPortfolioAlbums.reduce((max, album) => Math.max(max, Number(album.sort_order) || 0), 0) + 10;
+      const { error } = await sb.from("flickz_public_albums").insert({
+        owner_id: userResult.user.id,
+        title: el("publicAlbumTitle").value.trim(),
+        description: el("publicAlbumDescription").value.trim(),
+        category: el("publicAlbumCategory").value,
+        is_active: true,
+        sort_order: nextOrder
+      });
+      if (error) throw error;
+      el("publicAlbumTitle").value = "";
+      el("publicAlbumDescription").value = "";
+      await refreshPublicPortfolioAdmin();
+      await loadPublicPortfolioAlbums();
+      status("publicPortfolioAdminStatus", "Public album created. You can now add photos to it.");
+    } catch (error) {
+      status("publicPortfolioAdminStatus", error.message || "Could not create the album.");
+    } finally { button.disabled = false; }
+  });
+
+  el("uploadPublicPhotosForm")?.addEventListener("submit", async event => {
+    event.preventDefault();
+    const albumId = el("publicUploadAlbum").value;
+    const files = [...el("publicPhotoFiles").files];
+    if (!albumId || !files.length) return status("publicPortfolioAdminStatus", "Choose an album and at least one photo.");
+    const button = event.currentTarget.querySelector('button[type="submit"]');
+    button.disabled = true;
+    button.textContent = "UPLOADING...";
+    try {
+      const { data: userResult, error: userError } = await sb.auth.getUser();
+      if (userError || !userResult.user) throw new Error("Please sign in again.");
+      const currentPhotos = publicPortfolioPhotos.filter(photo => photo.album_id === albumId);
+      let nextOrder = currentPhotos.reduce((max, photo) => Math.max(max, Number(photo.sort_order) || 0), 0) + 1;
+      let uploaded = 0;
+      const errors = [];
+      for (const file of files) {
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 20 * 1024 * 1024) {
+          errors.push(file.name + ": use JPG, PNG, or WebP under 20 MB.");
+          continue;
+        }
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const path = userResult.user.id + "/" + albumId + "/" + crypto.randomUUID() + "-" + safeName;
+        const { error: uploadError } = await sb.storage.from(PUBLIC_PORTFOLIO_BUCKET).upload(path, file, {
+          contentType: file.type,
+          upsert: false
+        });
+        if (uploadError) {
+          errors.push(file.name + ": " + uploadError.message);
+          continue;
+        }
+        const { error: rowError } = await sb.from("flickz_public_photos").insert({
+          album_id: albumId,
+          owner_id: userResult.user.id,
+          storage_path: path,
+          file_name: file.name,
+          sort_order: nextOrder++
+        });
+        if (rowError) {
+          await sb.storage.from(PUBLIC_PORTFOLIO_BUCKET).remove([path]);
+          errors.push(file.name + ": " + rowError.message);
+          continue;
+        }
+        uploaded++;
+        status("publicPortfolioAdminStatus", "Uploading... " + uploaded + " of " + files.length + " photos saved.");
+      }
+      el("publicPhotoFiles").value = "";
+      await refreshPublicPortfolioAdmin();
+      await loadPublicPortfolioAlbums();
+      status("publicPortfolioAdminStatus", "Uploaded " + uploaded + " of " + files.length + " photo(s)." + (errors.length ? "\n" + errors.join("\n") : ""));
+    } catch (error) {
+      status("publicPortfolioAdminStatus", error.message || "Photo upload failed.");
+    } finally {
+      button.disabled = false;
+      button.textContent = "UPLOAD PUBLIC PHOTOS";
+    }
+  });
 
   loginForm?.addEventListener("submit", async event => {
     event.preventDefault();
