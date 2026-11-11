@@ -161,7 +161,9 @@ Deno.serve(async req => {
     }
 
     if (action === "create-checkout-session") {
-      if (!stripe) return json(req, { error: "Secure checkout is not configured yet." }, 503);
+      if (!stripe || !STRIPE_SECRET_KEY.startsWith("sk_test_")) {
+        return json(req, { error: "Checkout is in test setup only. Add your Stripe test secret key first." }, 503);
+      }
       const productKey = body?.product_key;
       if (!isProductKey(productKey)) return json(req, { error: "Unknown preset product." }, 400);
 
@@ -206,7 +208,9 @@ Deno.serve(async req => {
     }
 
     if (action === "create-download-link") {
-      if (!stripe) return json(req, { error: "Download delivery is not configured yet." }, 503);
+      if (!stripe || !STRIPE_SECRET_KEY.startsWith("sk_test_")) {
+        return json(req, { error: "Preset downloads are in test setup only until the checkout is verified." }, 503);
+      }
       const sessionId = typeof body?.session_id === "string" ? body.session_id : "";
       if (!/^cs_(test|live)_[A-Za-z0-9]+$/.test(sessionId)) return json(req, { error: "Invalid checkout session." }, 400);
       const session = await stripe.checkout.sessions.retrieve(sessionId);
